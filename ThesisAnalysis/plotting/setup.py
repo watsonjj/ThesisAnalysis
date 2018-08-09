@@ -3,6 +3,7 @@ mpl.use('pgf')
 import os
 from CHECLabPy.plotting.setup import Plotter
 
+
 class ThesisPlotter(Plotter):
     def __init__(self, ax=None):
         super().__init__(ax)
@@ -30,13 +31,41 @@ class ThesisPlotter(Plotter):
             "axes.titlesize": 10,
             "axes.labelsize": 10,        # LaTeX default is 10pt font.
             "legend.fontsize": 8,        # Make the legend/label fonts a little smaller
+
+            # Set x axis
             "xtick.labelsize": 8,
+            "xtick.direction": 'in',
+            "xtick.major.size": 3,
+            "xtick.major.width": 0.5,
+            "xtick.minor.size": 1.5,
+            "xtick.minor.width": 0.5,
+            "xtick.minor.visible": True,
+            "xtick.top": True,
+
+            # Set y axis
             "ytick.labelsize": 8,
+            "ytick.direction": 'in',
+            "ytick.major.size": 3,
+            "ytick.major.width": 0.5,
+            "ytick.minor.size": 1.5,
+            "ytick.minor.width": 0.5,
+            "ytick.minor.visible": True,
+            "ytick.right": True,
+
+            "axes.linewidth": 0.5,
+            "grid.linewidth": 0.5,
+            "lines.linewidth": 1.,
+
+            "savefig.bbox": 'tight',
+            "savefig.pad_inches": 0.05,
+
             "figure.figsize": self.figsize(0.9), # default fig size of 0.9 textwidth
             "lines.markeredgewidth": 1,
             "pgf.preamble": [
                 r"\usepackage[utf8x]{inputenc}", # use utf8 fonts becasue your computer can handle it :)
-                r"\usepackage[T1]{fontenc}" # plots will be generated using this preamble
+                r"\usepackage[T1]{fontenc}", # plots will be generated using this preamble
+                r"\usepackage{amsmath}",
+                r"\usepackage{pgfplots}",
             ]
         }
 
@@ -45,16 +74,7 @@ class ThesisPlotter(Plotter):
     def create_figure(self):
         fig, ax = super().create_figure()
 
-        fmt = mpl.ticker.StrMethodFormatter("{x}")
-        ax.xaxis.set_major_formatter(fmt)
-        ax.yaxis.set_major_formatter(fmt)
+        # fmt = mpl.ticker.StrMethodFormatter("{x}")
+        # ax.xaxis.set_major_formatter(fmt)
+        # ax.yaxis.set_major_formatter(fmt)
         return fig, ax
-
-    def save(self, output_name):
-        directory = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.join(directory, output_name)
-        path_pdf = path + ".pdf"
-        path_pgf = path + ".pgf"
-        super().save(path_pdf)
-        # self.fig.savefig(path_pgf, bbox_inches='tight')
-        # print("Figure saved to: {}".format(path_pgf))
