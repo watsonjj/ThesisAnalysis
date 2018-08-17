@@ -41,7 +41,7 @@ class ThesisHDF5Writer:
         mapping_meta = mapping.metadata
         self.store.get_storer('mapping').attrs.metadata = mapping_meta
 
-    def write_metadata(self, metadata):
+    def write_metadata(self, **metadata):
         self.store['metadata'] = pd.DataFrame()
         self.store.get_storer('metadata').attrs.metadata = metadata
 

@@ -7,10 +7,9 @@ import warnings
 from pandas.errors import PerformanceWarning
 
 
-def process(input_paths, config_path, poi, output_path):
+def get_dict(type, input_paths, config_path, roi, poi):
     readers = [DL1Reader(path) for path in input_paths]
     n_illuminations = len(readers)
-    mapping = readers[0].mapping
     fitter = GentileFitter(n_illuminations, config_path)
 
     charges = []
@@ -23,49 +22,73 @@ def process(input_paths, config_path, poi, output_path):
         charges.append(charge_p)
     fitter.apply(*charges)
 
+    eped = fitter.coeff['eped']
+    spe = fitter.coeff['spe']
+    charges_norm = [(c - eped) / spe for c in charges]
+
+    fitter.range = [-1, 5]
+    fitter.initial['eped_sigma'] = 0.5
+    fitter.initial['spe'] = 1
+    fitter.initial['spe_sigma'] = 0.1
+    fitter.limits['limit_eped_sigma'] = [0.001, 1]
+    fitter.limits['limit_spe'] = [0.001, 2]
+    fitter.limits['limit_spe_sigma'] = [0.001, 1]
+    fitter.apply(*charges_norm)
+
     fitx = np.linspace(fitter.range[0], fitter.range[1], 1000)
     coeff = fitter.coeff.copy()
+    spe = coeff['spe']
+    print(spe)
 
-    d = dict(
+    return dict(
+        type=type,
         edges=fitter.edges,
         between=fitter.between,
-        fitx=fitx
+        fitx=fitx,
+        hist=fitter.hist[roi],
+        fit=fitter.fit_function(fitx, **coeff)[roi],
+        roi=roi,
+        **coeff
     )
-    for i in range(n_illuminations):
-        d["hist{}".format(i)] = fitter.hist[i]
-        d["fit{}".format(i)] = fitter.fit_function(fitx, **coeff)[i]
 
-    df_array = pd.DataFrame([d])
-    df_coeff = pd.DataFrame(coeff, index=[0])
+
+def process(mc_input_paths, mc_config_path, mc_roi,
+            lab_input_paths, lab_config_path, lab_roi,
+            poi, output_path):
+
+    d_list = []
+
+    d_list.append(get_dict("MC", mc_input_paths, mc_config_path, mc_roi, poi))
+    d_list.append(get_dict("Lab", lab_input_paths, lab_config_path, lab_roi, poi))
+
+    df = pd.DataFrame(d_list)
 
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', PerformanceWarning)
         with ThesisHDF5Writer(output_path) as writer:
-            writer.write(array=df_array, coeff=df_coeff)
-            writer.write_mapping(mapping)
-            writer.write_metadata(n_illuminations=n_illuminations)
+            writer.write(data=df)
 
 
 def main():
-    input_paths = [
+    mc_input_paths = [
         "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/Run43514_dl1.h5",
         "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/Run43515_dl1.h5",
         "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/Run43516_dl1.h5"
     ]
-    config_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/config.yml"
-    poi = 888
-    output_path = get_data("mc_spe_spectrum.h5")
-    process(input_paths, config_path, poi, output_path)
-
-    input_paths = [
+    mc_config_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/config.yml"
+    mc_roi = 2
+    lab_input_paths = [
         "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_poly/Run43514_dl1.h5",
         "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_poly/Run43515_dl1.h5",
         "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_poly/Run43516_dl1.h5"
     ]
-    config_path = None
-    poi = 888
-    output_name = get_data("lab_spe_spectrum.h5")
-    process(input_paths, config_path, poi, output_name)
+    lab_config_path = None
+    lab_roi = 1
+    poi = 1344
+    output_path = get_data("spe_spectrum_comparison.h5")
+    process(mc_input_paths, mc_config_path, mc_roi,
+            lab_input_paths, lab_config_path, lab_roi,
+            poi, output_path)
 
 
 if __name__ == '__main__':

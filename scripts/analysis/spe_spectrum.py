@@ -36,7 +36,7 @@ class SPEPlotterTable(SPEPlotter):
     def __init__(self):
         super().__init__()
 
-        self.fig = plt.figure(figsize=self.figsize())
+        self.fig = plt.figure(figsize=self.get_figsize())
         self.ax = plt.subplot2grid((3, 2), (0, 0), rowspan=3)
         self.ax_t = plt.subplot2grid((3, 2), (0, 1), rowspan=3)
 
@@ -64,21 +64,23 @@ def process(input_path):
     n_illuminations = metadata['n_illuminations']
 
     base_name = os.path.splitext(os.path.basename(input_path))[0]
+    output_dir = get_plot("spe_spectrum")
 
     p_spe = SPEPlotter()
     p_spe.plot(n_illuminations, df_array, df_coeff)
-    p_spe.save(get_plot(base_name+".pdf"))
+    p_spe.save(os.path.join(output_dir, base_name+".pdf"))
 
     p_spe_table = SPEPlotterTable()
     p_spe_table.plot(n_illuminations, df_array, df_coeff)
-    p_spe_table.save(get_plot(base_name+"_table.pdf"))
+    p_spe_table.save(os.path.join(output_dir, base_name+"_table.pdf"))
+
 
 def main():
     input_path = get_data("mc_spe_spectrum.h5")
     process(input_path)
 
-    # input_path = get_data("data_spe_spectrum.h5")
-    # process(input_path)
+    input_path = get_data("lab_spe_spectrum.h5")
+    process(input_path)
 
 
 if __name__ == '__main__':

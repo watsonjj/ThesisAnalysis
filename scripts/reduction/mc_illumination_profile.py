@@ -26,7 +26,7 @@ def main():
     with ThesisHDF5Writer(get_data("mc_illumination_profile.h5")) as writer:
         writer.write(data=df)
         writer.write_mapping(mapping)
-        writer.write_metadata({'n_events': n_events})
+        writer.write_metadata(n_events=n_events)
 
 
 if __name__ == '__main__':

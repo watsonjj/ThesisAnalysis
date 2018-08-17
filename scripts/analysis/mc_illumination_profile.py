@@ -68,7 +68,7 @@ class PixelScatter(ThesisPlotter):
 
         self.df_list = []
 
-        self.fig = plt.figure(figsize=self.figsize())
+        self.fig = plt.figure(figsize=self.get_figsize())
         self.data_ax = self.fig.add_axes((.1, .3, .8, .6))
         self.data_ax.set_xticklabels([])
         self.res_ax = self.fig.add_axes((.1, .1, .8, .2))

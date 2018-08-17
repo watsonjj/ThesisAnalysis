@@ -1,9 +1,11 @@
 from ThesisAnalysis.plotting.setup import ThesisPlotter
 import numpy as np
 import matplotlib as mpl
+from matplotlib import pyplot as plt
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Rectangle
 from CHECLabPy.utils.mapping import get_clp_mapping_from_tc_mapping
+import os
 
 
 class CameraImage(ThesisPlotter):
@@ -52,6 +54,9 @@ class CameraImage(ThesisPlotter):
             )
             patches.append(poly)
 
+        # self.fig = plt.figure(figsize=self.get_figsize())
+        # self.ax = self.fig.add_axes((0,0,1,1))
+
         self.pixels = PatchCollection(patches, linewidth=0)
         self.ax.add_collection(self.pixels)
         self.pixels.set_array(np.zeros(self.n_pixels))
@@ -62,15 +67,15 @@ class CameraImage(ThesisPlotter):
         self.ax.autoscale_view()
         self.ax.axis('off')
 
-    @staticmethod
-    def figsize(scale=0.9):
-        fig_width_pt = 469.755  # Get this from LaTeX using \the\textwidth
-        inches_per_pt = 1.0 / 72.27  # Convert pt to inch
-        golden_mean = (np.sqrt(5.0) - 1.0) / 2.0  # Aesthetic ratio
-        fig_width = fig_width_pt * inches_per_pt * scale  # width in inches
-        fig_height = fig_width * 0.8# * golden_mean * 1  # height in inches
-        fig_size = [fig_width, fig_height]
-        return fig_size
+    # @staticmethod
+    # def figsize(scale=0.9):
+    #     fig_width_pt = 469.755  # Get this from LaTeX using \the\textwidth
+    #     inches_per_pt = 1.0 / 72.27  # Convert pt to inch
+    #     golden_mean = (np.sqrt(5.0) - 1.0) / 2.0  # Aesthetic ratio
+    #     fig_width = fig_width_pt * inches_per_pt * scale  # width in inches
+    #     fig_height = fig_width * 0.8# * golden_mean * 1  # height in inches
+    #     fig_size = [fig_width, fig_height]
+    #     return fig_size
 
     @property
     def image(self):
@@ -86,8 +91,33 @@ class CameraImage(ThesisPlotter):
             self.pixels.autoscale() # Updates the colorbar
         self.ax.figure.canvas.draw()
 
+    def save(self, output_path):
+        super().save(output_path)
+        if output_path.endswith('.pdf'):
+            self.crop(output_path)
+
+    @staticmethod
+    def crop(path):
+        from PyPDF2 import PdfFileWriter, PdfFileReader
+        with open(path, "rb") as in_f:
+            input1 = PdfFileReader(in_f)
+            output = PdfFileWriter()
+
+            numPages = input1.getNumPages()
+            for i in range(numPages):
+                page = input1.getPage(i)
+                page.cropBox.lowerLeft = (100, 20)
+                page.cropBox.upperRight = (340, 220)
+                output.addPage(page)
+
+            pdf_path = os.path.splitext(path)[0] + "_cropped.pdf"
+            with open(pdf_path, "wb") as out_f:
+                output.write(out_f)
+                print("Cropped figure saved to: {}".format(pdf_path))
+
+
     def add_colorbar(self, label=''):
-        self.colorbar = self.ax.figure.colorbar(self.pixels, label=label)
+        self.colorbar = self.ax.figure.colorbar(self.pixels, label=label, pad=-0.2)
 
     def set_limits_minmax(self, zmin, zmax):
         """
