@@ -94,7 +94,7 @@ class Waveform(ThesisPlotter):
         df_event = df.loc[df['iev'] == event]
         x = df_event['isam']
         y = df_event['r0']
-        self.ax.plot(x, y)
+        self.ax.plot(x, y, color='black')
 
         self.ax.set_xlabel("Time (ns)")
         self.ax.set_ylabel("Amplitude (Raw ADC)")
@@ -118,7 +118,7 @@ class CellWaveform(ThesisPlotter):
 
         [self.ax.axvline(l, ls='--', color='gray', alpha=0.7)
          for l in block_edges]
-        self.ax.errorbar(x, y, yerr=yerr)
+        self.ax.errorbar(x, y, yerr=yerr, color='black')
 
         self.ax.set_xlabel("Position in waveform")
         self.ax.set_ylabel("Amplitude (Raw ADC)")
@@ -183,21 +183,21 @@ def process(camera, input_path):
 
 
 def main():
-    # camera = "checs"
-    # input_path = get_data("pedestal/pedestal_checs.h5")
-    # process(camera, input_path)
-    #
-    # camera = "checs_mV"
-    # input_path = get_data("pedestal/pedestal_checs_mV.h5")
-    # process(camera, input_path)
+    camera = "checs"
+    input_path = get_data("pedestal/pedestal_checs.h5")
+    process(camera, input_path)
+
+    camera = "checs_mV"
+    input_path = get_data("pedestal/pedestal_checs_mV.h5")
+    process(camera, input_path)
 
     camera = "checs_pe"
     input_path = get_data("pedestal/pedestal_checs_pe.h5")
     process(camera, input_path)
 
-    # camera = "checm"
-    # input_path = get_data("pedestal/pedestal_checm.h5")
-    # process(camera, input_path)
+    camera = "checm"
+    input_path = get_data("pedestal/pedestal_checm.h5")
+    process(camera, input_path)
 
 
 if __name__ == '__main__':
