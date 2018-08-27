@@ -184,7 +184,7 @@ class ChargeMeanPlotter(ThesisPlotter):
     def _plot(self, x, y, yerr, label=''):
         y /= x
         yerr /= x
-        yerr = None
+        # yerr = None
         color = self.ax._get_lines.get_next_color()
 
         (_, caps, _) = self.ax.errorbar(

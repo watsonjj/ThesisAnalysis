@@ -119,3 +119,5 @@ class ThesisPlotter:
 
         if self.switch_backend:
             plt.switch_backend('pgf')
+
+        plt.close(self.fig)

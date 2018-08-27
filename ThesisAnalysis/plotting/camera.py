@@ -1,3 +1,5 @@
+from matplotlib.colors import LogNorm
+
 from ThesisAnalysis.plotting.setup import ThesisPlotter
 import numpy as np
 import matplotlib as mpl
@@ -6,10 +8,11 @@ from matplotlib.collections import PatchCollection
 from matplotlib.patches import Rectangle
 from CHECLabPy.utils.mapping import get_clp_mapping_from_tc_mapping
 import os
+from copy import copy
 
 
 class CameraImage(ThesisPlotter):
-    def __init__(self, xpix, ypix, size, **kwargs):
+    def __init__(self, xpix, ypix, size, cmap=None, **kwargs):
         """
         Create a camera-image plot
 
@@ -57,7 +60,7 @@ class CameraImage(ThesisPlotter):
         # self.fig = plt.figure(figsize=self.get_figsize())
         # self.ax = self.fig.add_axes((0,0,1,1))
 
-        self.pixels = PatchCollection(patches, linewidth=0)
+        self.pixels = PatchCollection(patches, linewidth=0, cmap=cmap)
         self.ax.add_collection(self.pixels)
         self.pixels.set_array(np.zeros(self.n_pixels))
 
@@ -66,6 +69,11 @@ class CameraImage(ThesisPlotter):
         self.ax.set_ylabel("Y position (m)")
         self.ax.autoscale_view()
         self.ax.axis('off')
+
+        self.pixel_highlighting = copy(self.pixels)
+        self.pixel_highlighting.set_facecolor('none')
+        self.pixel_highlighting.set_linewidth(0)
+        self.ax.add_collection(self.pixel_highlighting)
 
     # @staticmethod
     # def figsize(scale=0.9):
@@ -84,6 +92,8 @@ class CameraImage(ThesisPlotter):
     @image.setter
     def image(self, val):
         assert val.size == self.n_pixels
+
+        self._image = val
 
         self.pixels.set_array(val)
         self.pixels.changed()
@@ -115,9 +125,9 @@ class CameraImage(ThesisPlotter):
                 output.write(out_f)
                 print("Cropped figure saved to: {}".format(pdf_path))
 
-
-    def add_colorbar(self, label=''):
-        self.colorbar = self.ax.figure.colorbar(self.pixels, label=label, pad=-0.2)
+    def add_colorbar(self, label='', **kwargs):
+        self.colorbar = self.ax.figure.colorbar(self.pixels, label=label,
+                                                pad=-0.2, **kwargs)
 
     def set_limits_minmax(self, zmin, zmax):
         """
@@ -125,6 +135,10 @@ class CameraImage(ThesisPlotter):
         """
         self.pixels.set_clim(zmin, zmax)
         self.autoscale = False
+
+    def set_z_log(self):
+        self.pixels.norm = LogNorm()
+        self.pixels.autoscale()
 
     def reset_limits(self):
         """
@@ -185,6 +199,31 @@ class CameraImage(ThesisPlotter):
         assert values.size == self.n_pixels
         for pixel in range(self.n_pixels):
             self.add_text_to_pixel(pixel, values[pixel], fmt, size)
+
+    def highlight_pixels(self, pixels, color='g', linewidth=0.5, alpha=0.75):
+        """
+        Highlight the given pixels with a colored line around them
+
+        Parameters
+        ----------
+        pixels : index-like
+            The pixels to highlight.
+            Can either be a list or array of integers or a
+            boolean mask of length number of pixels
+        color: a matplotlib conform color
+            the color for the pixel highlighting
+        linewidth: float
+            linewidth of the highlighting in points
+        alpha: 0 <= alpha <= 1
+            The transparency
+        """
+
+        l = np.zeros_like(self.image)
+        l[pixels] = linewidth
+        self.pixel_highlighting.set_linewidth(l)
+        self.pixel_highlighting.set_alpha(alpha)
+        self.pixel_highlighting.set_edgecolor(color)
+        # self._update()
 
     def annotate_tm_edge_label(self):
         """
