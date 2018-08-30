@@ -47,7 +47,7 @@ class ChargeResolutionPlotter(ThesisPlotter):
     def plot_pixel(self, pixel, label=''):
         df_pixel = self.df_pixel.loc[self.df_pixel['pixel'] == pixel]
         x = df_pixel['true']
-        y = df_pixel['rmse']
+        y = df_pixel['charge_resolution']
         yerr = 1 / np.sqrt(x)
 
         x, y, yerr = bin_points(x, y, yerr)
@@ -56,7 +56,7 @@ class ChargeResolutionPlotter(ThesisPlotter):
 
     def plot_camera(self, label=''):
         x = self.df_camera['true']
-        y = self.df_camera['rmse']
+        y = self.df_camera['charge_resolution']
         yerr = 1 / np.sqrt(x)
 
         x, y, yerr = bin_points(x, y, yerr)
@@ -65,7 +65,7 @@ class ChargeResolutionPlotter(ThesisPlotter):
 
     def finish(self):
         self.ax.set_xlabel("Expected Charge (p.e.)")
-        self.ax.set_ylabel("Fractional Charge Resolution $\sigma_Q/Q$")
+        self.ax.set_ylabel(r"Fractional Charge Resolution $\frac{{\sigma_Q}}{{Q}}$")
         self.ax.set_xscale('log')
         self.ax.get_xaxis().set_major_formatter(
             FuncFormatter(lambda x, _: '{:g}'.format(x)))
@@ -162,7 +162,7 @@ class ChargeResolutionWRRPlotter(ChargeResolutionPlotter):
 
     def finish(self):
         self.ax.set_xlabel("Expected Charge (p.e.)")
-        self.ax.set_ylabel("Fractional Charge Resolution $\sigma_Q/Q$ / Requirement")
+        self.ax.set_ylabel(r"Fractional Charge Resolution $\frac{{\sigma_Q}}{{Q}}$ / Requirement")
         self.ax.set_xscale('log')
         self.ax.get_xaxis().set_major_formatter(
             FuncFormatter(lambda x, _: '{:g}'.format(x)))

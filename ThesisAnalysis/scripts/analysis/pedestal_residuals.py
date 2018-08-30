@@ -47,9 +47,9 @@ class Hist(ThesisPlotter):
         self.ax.hist(r1, bins=40, color=c1, alpha=0.5, label=label_r1)
 
         self.ax.set_ylabel('Counts')
-        self.ax2.set_xlabel('Raw Samples (ADC)', color=c2)
+        self.ax2.set_xlabel('Raw Samples (ADC)')
         self.ax2.tick_params('x', which='both', colors=c2)
-        self.ax.set_xlabel('Pedestal-Subtracted Samples (ADC)', color=c1)
+        self.ax.set_xlabel('Pedestal-Subtracted Samples (ADC)')
         self.ax.tick_params('x', which='both', colors=c1)
 
         lines, labels = self.ax.get_legend_handles_labels()

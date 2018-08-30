@@ -20,7 +20,7 @@ class IlluminationProfile:
     def distance_to_radial_position(self, x):
         r = self.camera_radius
         dc = self.lightsource_focalplane_seperation
-        dz = np.sqrt(x**2 + (dc + r - np.sqrt(r**2 + x**2))**2)
+        dz = np.sqrt(x**2 + (dc + r - np.sqrt(r**2 - x**2))**2)
         return dz
 
     def viewing_angle(self, x):
@@ -58,7 +58,7 @@ class IlluminationProfile:
 
         ang_corr = self.angular_response_at_radial_position(x)
 
-        correction = dz_corr * pz_corr * ang_corr
+        correction = dz_corr * pz_corr# * ang_corr
         return correction
 
 
@@ -80,9 +80,9 @@ class PixelScatter(ThesisPlotter):
         yf = polyval(xf, params)
         self.data_ax.plot(xf, yf, color='red')
 
-        # ip = IlluminationProfile()
-        # yfm = ip.get_illumination_correction(xf) * yf.max()
-        # self.data_ax.plot(xf, yfm, color='green')
+        ip = IlluminationProfile()
+        yfm = ip.get_illumination_correction(xf) * yf.max()
+        self.data_ax.plot(xf, yfm, color='green')
 
         # Residuals
         self.res_ax.axhline(0, ls='--', c='red', alpha=0.3, lw=0.5)

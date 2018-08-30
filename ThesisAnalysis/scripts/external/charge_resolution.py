@@ -11,6 +11,7 @@ def process(file):
     runlist_path = file.runlist_path
     fw_path = file.fw_path
     ff_path = file.ff_path
+    output_path = file.charge_resolution_path
 
     df_runs = open_runlist_dl1(runlist_path)
     df_runs['transmission'] = 1/df_runs['fw_atten']
@@ -48,9 +49,6 @@ def process(file):
         reader.store.close()
     df_cr_pixel, df_cr_camera = cr.finish()
     df_cs_pixel, df_cs_camera = cs.finish()
-
-    output_dir = os.path.dirname(runlist_path)
-    output_path = os.path.join(output_dir, "charge_resolution.h5")
 
     with ThesisHDF5Writer(output_path) as writer:
         writer.write(

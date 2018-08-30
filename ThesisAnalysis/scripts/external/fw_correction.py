@@ -66,14 +66,26 @@ def process(file_dict, subdir):
         x = df_mean.index
         y = df_mean['before_mVns_ip'].values
         yerr = df_std['before_mVns_ip'].values
-
-        c, m = polyfit(x[s], y[s], [1], w=1/yerr[s])
-
-        yf = polyval(x, (c, m))
-
         color = p_scatter.ax._get_lines.get_next_color()
-        p_scatter.plot(x, y, yerr, l, color=color)
-        p_scatter.ax.plot(x, yf, color=color, label="")
+        p_scatter.plot(x, y, yerr, l, color=color, zorder=1)
+
+        # c, m = polyfit(x[s], y[s], [1], w=1/yerr[s])
+        # yf = polyval(x, (c, m))
+        # p_scatter.ax.plot(x, yf, color=color, label="")
+
+        # sf = np.s_[:12]
+        # v = polyfit(np.log10(x[sf]), np.log10(y[sf]), 1, w=1 / yerr[sf])
+        # p_scatter.ax.plot(x, 10**polyval(np.log10(x), v), '--', color=color, alpha=0.7, label="", zorder=2)
+        # sf = np.s_[12:19]
+        # v = polyfit(np.log10(x[sf]), np.log10(y[sf]), 1, w=1 / yerr[sf])
+        # p_scatter.ax.plot(x, 10**polyval(np.log10(x), v), '--', color=color, alpha=0.7, label="", zorder=2)
+        # sf = np.s_[19:-17]
+        # v = polyfit(np.log10(x[sf]), np.log10(y[sf]), 1, w=1 / yerr[sf])
+        # p_scatter.ax.plot(x, 10**polyval(np.log10(x), v), '--', color=color, alpha=0.7, label="", zorder=2)
+        p_scatter.ax.axvline(np.mean(x[[11, 12]]), linestyle = '--', color='gray', alpha=0.7, lw=0.5)
+        p_scatter.ax.axvline(np.mean(x[[18, 19]]), linestyle = '--', color='gray', alpha=0.7, lw=0.5)
+
+
     p_scatter.set_log_x()
     p_scatter.set_log_y()
     p_scatter.add_legend('best')
@@ -144,22 +156,22 @@ def main():
     subdir = "gain-matching-original"
     process(file_dict, subdir)
 
-    file_dict = {
-        "50ADC-GM": Lab_GM50ADC(),
-        "100ADC-GM": Lab_GM100ADC(),
-        "200ADC-GM": Lab_GM200ADC(),
-    }
-    subdir = "gain-matching-post"
-    process(file_dict, subdir)
-
-    file_dict = {
-        "TF-None": Lab_TFNone(),
-        "TF-Poly": Lab_TFPoly(),
-        "TF-Pchip": Lab_TFPchip(),
-        "TF-WithPed": Lab_TFWithPed(),
-    }
-    subdir = "tf-comparison"
-    process(file_dict, subdir)
+    # file_dict = {
+    #     "50ADC-GM": Lab_GM50ADC(),
+    #     "100ADC-GM": Lab_GM100ADC(),
+    #     "200ADC-GM": Lab_GM200ADC(),
+    # }
+    # subdir = "gain-matching-post"
+    # process(file_dict, subdir)
+    #
+    # file_dict = {
+    #     "TF-None": Lab_TFNone(),
+    #     "TF-Poly": Lab_TFPoly(),
+    #     "TF-Pchip": Lab_TFPchip(),
+    #     "TF-WithPed": Lab_TFWithPed(),
+    # }
+    # subdir = "tf-comparison"
+    # process(file_dict, subdir)
 
 
 if __name__ == '__main__':

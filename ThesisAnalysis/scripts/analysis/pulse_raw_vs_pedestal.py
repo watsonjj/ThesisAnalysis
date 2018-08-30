@@ -60,7 +60,7 @@ class Waveform(ThesisPlotter):
 
 
 def main():
-    path = get_data("pedestal_pulse_checs.h5")
+    path = get_data("pedestal/pedestal_pulse_checs.h5")
     with ThesisHDF5Reader(path) as reader:
         df = reader.read("data")
 

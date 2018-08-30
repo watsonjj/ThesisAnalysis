@@ -56,6 +56,8 @@ def process_external():
     external.charge_before_after.main()
     external.fw_correction.main()
     external.charge_resolution.main()
+    external.mc_calibration.main()
+    external.charge_resolution_mc.main()
 
 
 def process_external_plots():
@@ -76,6 +78,7 @@ def process_reduction():
     reduction.spe_spectrum_comparison.main()
     reduction.tf_generation.main()
     reduction.tf_lookup.main()
+    reduction.charge_extraction_window.main()
 
 
 def process_analysis():
@@ -90,6 +93,7 @@ def process_analysis():
     analysis.spe_spectrum_comparison.main()
     analysis.tf_generation.main()
     analysis.tf_lookup.main()
+    analysis.charge_extraction_window.main()
 
 
 def main():
@@ -98,8 +102,8 @@ def main():
     # process_fw_correction_check()
     process_external()
     process_external_plots()
-    process_reduction()
-    process_analysis()
+    # process_reduction()
+    # process_analysis()
 
 
 if __name__ == '__main__':

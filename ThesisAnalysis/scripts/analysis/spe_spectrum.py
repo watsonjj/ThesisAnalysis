@@ -1,5 +1,6 @@
 from ThesisAnalysis import get_data, ThesisHDF5Reader, get_plot
 from ThesisAnalysis.plotting.setup import ThesisPlotter
+from ThesisAnalysis.files import spe_files, CHECM
 import os
 import numpy as np
 import pandas as pd
@@ -54,7 +55,10 @@ class SPEPlotterTable(SPEPlotter):
         table.set_fontsize(10)
 
 
-def process(input_path):
+def process(file):
+    name = file.__class__.__name__
+    input_path = get_data("spe/{}_spe_spectrum.h5".format(name))
+
     with ThesisHDF5Reader(input_path) as reader:
         df_array = reader.read("array")
         df_coeff = reader.read("coeff")
@@ -76,32 +80,8 @@ def process(input_path):
 
 
 def main():
-    input_path = get_data("spe/mc_spe_spectrum.h5")
-    process(input_path)
-
-    input_path = get_data("spe/lab_tfnone_spe_spectrum.h5")
-    process(input_path)
-
-    input_path = get_data("spe/lab_tfpchip_spe_spectrum.h5")
-    process(input_path)
-
-    input_path = get_data("spe/lab_tfpoly_spe_spectrum.h5")
-    process(input_path)
-
-    input_path = get_data("spe/lab_tfwithped_spe_spectrum.h5")
-    process(input_path)
-
-    input_path = get_data("spe/lab_50ADC_spe_spectrum.h5")
-    process(input_path)
-
-    input_path = get_data("spe/lab_100ADC_spe_spectrum.h5")
-    process(input_path)
-
-    input_path = get_data("spe/lab_200ADC_spe_spectrum.h5")
-    process(input_path)
-
-    input_path = get_data("spe/checm_spe_spectrum.h5")
-    process(input_path)
+    [process(f) for f in spe_files]
+    process(CHECM())
 
 
 if __name__ == '__main__':
