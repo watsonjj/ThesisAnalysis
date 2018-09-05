@@ -141,7 +141,10 @@ def process(file):
     with ThesisHDF5Writer(fw_path) as writer:
         writer.write(data=df_calib)
         writer.write_mapping(mapping)
-        writer.write_metadata(n_pixels=n_pixels)
+        writer.write_metadata(
+            n_pixels=n_pixels,
+            fw_m_camera=m_avg,
+        )
 
     p_fit = FitPlotter()
     p_fit.plot(transmission, np.array(lambda_)[:, :3], c[:3], m[:3])

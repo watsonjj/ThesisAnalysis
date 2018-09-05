@@ -1,9 +1,10 @@
-from ThesisAnalysis import get_data
+from ThesisAnalysis import get_data, ThesisHDF5Reader
 from abc import abstractmethod, ABCMeta
 import os
-from CHECLabPy.utils.files import open_runlist_dl1
+from CHECLabPy.utils.files import open_runlist_dl1, open_runlist_r1
 from glob import glob
 from CHECLabPy.core.io import DL1Reader
+import numpy as np
 
 
 class File(metaclass=ABCMeta):
@@ -47,6 +48,17 @@ class File(metaclass=ABCMeta):
     def is_abstract(self):
         return True
 
+    def get_run_with_illumination_r1(self, illumination):
+        df = open_runlist_r1(self.runlist_path, open_readers=False)
+        df['transmission'] = 1/df['fw_atten']
+
+        with ThesisHDF5Reader(self.fw_path) as reader:
+            fw_m = reader.read_metadata()['fw_m_camera']
+
+        df['expected'] = df['transmission'] * fw_m
+        idxmin = np.abs(df['expected'] - illumination).idxmin()
+        path = df.loc[idxmin]['path']
+        return path
 
 class MC(File):
     def __init__(self, mc_true=False, **kwargs):
@@ -251,22 +263,44 @@ class MCOnSky(MC):
 class MCOnSky_5MHz(MCOnSky):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/mc_calib.h5"
 
 
-class MCOnSky_5MHz_Local(MCOnSky_5MHz):
+class MCOnSky_5MHz_CC_Local(MCOnSky_5MHz):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/local/*_dl1.h5"
+        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/cc_local/*_dl1.h5"
+        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/cc_local/mc_calib.h5"
 
     def is_abstract(self):
         return False
 
 
-class MCOnSky_5MHz_Neighbour(MCOnSky_5MHz):
+class MCOnSky_5MHz_CC_Neighbour(MCOnSky_5MHz):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/neighbour/*_dl1.h5"
+        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/cc_neighbour/*_dl1.h5"
+        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/cc_local/mc_calib.h5"
+
+    def is_abstract(self):
+        return False
+
+
+class MCOnSky_5MHz_Window_Local(MCOnSky_5MHz):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/window_local/*_dl1.h5"
+        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/window_local/mc_calib.h5"
+
+
+    def is_abstract(self):
+        return False
+
+
+class MCOnSky_5MHz_Window_Neighbour(MCOnSky_5MHz):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/window_neighbour/*_dl1.h5"
+        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/window_local/mc_calib.h5"
 
     def is_abstract(self):
         return False
@@ -275,22 +309,43 @@ class MCOnSky_5MHz_Neighbour(MCOnSky_5MHz):
 class MCOnSky_125MHz(MCOnSky):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/125mhz/mc_calib.h5"
 
 
-class MCOnSky_125MHz_Local(MCOnSky_125MHz):
+class MCOnSky_125MHz_CC_Local(MCOnSky_125MHz):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/125mhz/local/*_dl1.h5"
+        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/125mhz/cc_local/*_dl1.h5"
+        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/cc_local/mc_calib.h5"
 
     def is_abstract(self):
         return False
 
 
-class MCOnSky_125MHz_Neighbour(MCOnSky_125MHz):
+class MCOnSky_125MHz_CC_Neighbour(MCOnSky_125MHz):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/125mhz/neighbour/*_dl1.h5"
+        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/125mhz/cc_neighbour/*_dl1.h5"
+        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/cc_local/mc_calib.h5"
+
+    def is_abstract(self):
+        return False
+
+
+class MCOnSky_125MHz_Window_Local(MCOnSky_125MHz):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/125mhz/window_local/*_dl1.h5"
+        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/window_local/mc_calib.h5"
+
+    def is_abstract(self):
+        return False
+
+
+class MCOnSky_125MHz_Window_Neighbour(MCOnSky_125MHz):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.glob_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/125mhz/window_neighbour/*_dl1.h5"
+        self.mc_calib_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/5mhz/window_local/mc_calib.h5"
 
     def is_abstract(self):
         return False
@@ -537,6 +592,11 @@ mc_calib_files = [
     MCLab_Opct20_Window_5MHz(),
 ]
 
+mc_onsky_calib_files = [
+    MCOnSky_5MHz_CC_Local(),
+    MCOnSky_5MHz_Window_Local(),
+]
+
 mc_files = [
     # MCLab_Opct40_0MHz(),
     # MCLab_Opct40_5MHz(),
@@ -549,8 +609,12 @@ mc_files = [
     # MCLab_Opct20_Window_125MHz(),
     # MCLab_Opct20_Window_5MHz_HEN(),
     # MCLab_Opct20_CC_5MHz_HEN(),
-    MCOnSky_5MHz_Local(),
-    MCOnSky_5MHz_Neighbour(),
-    MCOnSky_125MHz_Local(),
-    MCOnSky_125MHz_Neighbour(),
+    MCOnSky_5MHz_CC_Local(),
+    MCOnSky_5MHz_CC_Neighbour(),
+    MCOnSky_5MHz_Window_Local(),
+    MCOnSky_5MHz_Window_Neighbour(),
+    MCOnSky_125MHz_CC_Local(),
+    MCOnSky_125MHz_CC_Neighbour(),
+    MCOnSky_125MHz_Window_Local(),
+    MCOnSky_125MHz_Window_Neighbour(),
 ]

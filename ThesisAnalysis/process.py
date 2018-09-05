@@ -79,6 +79,7 @@ def process_reduction():
     reduction.tf_generation.main()
     reduction.tf_lookup.main()
     reduction.charge_extraction_window.main()
+    reduction.annotated_waveform.main()
 
 
 def process_analysis():
@@ -94,6 +95,7 @@ def process_analysis():
     analysis.tf_generation.main()
     analysis.tf_lookup.main()
     analysis.charge_extraction_window.main()
+    analysis.annotated_waveform.main()
 
 
 def main():

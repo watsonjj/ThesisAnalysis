@@ -101,6 +101,7 @@ def main():
         mapping = reader.read_mapping()
         metadata = reader.read_metadata()
 
+    pixel = df['pixel'].values
     true = df['true'].values
     dist = df['distance'].values
     n_events = metadata['n_events']
@@ -110,7 +111,8 @@ def main():
     pixel_corrections = polyval(dist, params_norm)
 
     df_corr = pd.DataFrame(dict(
-        correction=pixel_corrections
+        pixel=pixel,
+        correction=pixel_corrections,
     ))
     df_params = pd.DataFrame(params_norm)
 

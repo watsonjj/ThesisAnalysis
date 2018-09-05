@@ -11,3 +11,4 @@ from . import spe_spectrum_comparison
 from . import tf_generation
 from . import tf_lookup
 from . import charge_extraction_window
+from . import annotated_waveform

@@ -95,21 +95,21 @@ def process_wf(input_path, output_path):
 
 
 def main():
-    # input_path = get_data("charge_extraction_window/amp1nsb5.h5")
-    # output_path = get_plot("charge_extraction_window/amp1nsb5.pdf")
-    # process(input_path, output_path)
-    #
-    # input_path = get_data("charge_extraction_window/amp50nsb5.h5")
-    # output_path = get_plot("charge_extraction_window/amp50nsb5.pdf")
-    # process(input_path, output_path)
-    #
-    # input_path = get_data("charge_extraction_window/amp1nsb125.h5")
-    # output_path = get_plot("charge_extraction_window/amp1nsb125.pdf")
-    # process(input_path, output_path)
-    #
-    # input_path = get_data("charge_extraction_window/amp50nsb125.h5")
-    # output_path = get_plot("charge_extraction_window/amp50nsb125.pdf")
-    # process(input_path, output_path)
+    input_path = get_data("charge_extraction_window/amp1nsb5.h5")
+    output_path = get_plot("charge_extraction_window/amp1nsb5.pdf")
+    process(input_path, output_path)
+
+    input_path = get_data("charge_extraction_window/amp50nsb5.h5")
+    output_path = get_plot("charge_extraction_window/amp50nsb5.pdf")
+    process(input_path, output_path)
+
+    input_path = get_data("charge_extraction_window/amp1nsb125.h5")
+    output_path = get_plot("charge_extraction_window/amp1nsb125.pdf")
+    process(input_path, output_path)
+
+    input_path = get_data("charge_extraction_window/amp50nsb125.h5")
+    output_path = get_plot("charge_extraction_window/amp50nsb125.pdf")
+    process(input_path, output_path)
 
     input_path = get_data("charge_extraction_window/wf.h5")
     output_path = get_plot("charge_extraction_window/charge_extraction_window_wf.pdf")

@@ -13,11 +13,13 @@ def main():
     xpix = mapping['xpix'].values
     ypix = mapping['ypix'].values
     dist = np.sqrt(xpix ** 2 + ypix ** 2)
+    n_pixels = mapping.metadata['n_pixels']
 
     n_events = reader.n_events
     true_p = true.values.reshape((n_events, 2048)).mean(0)
 
     df = pd.DataFrame(dict(
+        pixel=np.arange(n_pixels),
         distance=dist,
         true=true_p,
     ))
@@ -25,7 +27,10 @@ def main():
     with ThesisHDF5Writer(get_data("mc_illumination_profile.h5")) as writer:
         writer.write(data=df)
         writer.write_mapping(mapping)
-        writer.write_metadata(n_events=n_events)
+        writer.write_metadata(
+            n_events=n_events,
+            n_pixels=n_pixels,
+        )
 
 
 if __name__ == '__main__':

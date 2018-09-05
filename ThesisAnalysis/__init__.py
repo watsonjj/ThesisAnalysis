@@ -12,6 +12,11 @@ def get_data(path):
 def get_plot(path):
     return os.path.join(_ROOT, 'plots', path)
 
+def get_thesis_figure(chapter, file):
+    d = "/Users/Jason/Dropbox/DropboxDocuments/University/Oxford/Reports/Thesis/figures"
+    path = os.path.join(d, chapter, file)
+    return path
+
 
 class ThesisHDF5Writer:
     def __init__(self, path):

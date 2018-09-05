@@ -127,16 +127,28 @@ def main():
     # ph = PlotHandler()
     # ph.plot_pixel_from_dict(path_dict, poi)
     # ph.save(output_dir)
-    #
-    # output_dir = get_plot("charge_resolution/ce_comparison/lab")
+
+    # output_dir = get_plot("charge_resolution/mc_calibration")
     # path_dict = {
-    #     "Cross-Correlation": Lab_TFPoly(),
-    #     "Window Integration": Lab_Window(),
+    #     "Default Calibration, 5MHz": MCLab_Opct40_5MHz(),
+    #     "MC Calibration, 5MHz": MCLab_Opct40_5MHz(mc_true=True),
+    #     "Default Calibration, 125MHz": MCLab_Opct40_125MHz(),
+    #     "MC Calibration, 125MHz": MCLab_Opct40_125MHz(mc_true=True),
     # }
     # ph = PlotHandler()
     # ph.plot_pixel_from_dict(path_dict, poi)
     # ph.save(output_dir)
-    #
+
+
+    output_dir = get_plot("charge_resolution/ce_comparison/lab")
+    path_dict = {
+        "Cross-Correlation": Lab_TFPoly(),
+        "Window Integration": Lab_Window(),
+    }
+    ph = PlotHandler()
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.save(output_dir)
+
     # output_dir = get_plot("charge_resolution/ce_comparison/opct40")
     # path_dict = {
     #     "Cross-Correlation, 5MHz": MCLab_Opct40_5MHz(),
@@ -148,16 +160,16 @@ def main():
     # ph.plot_pixel_from_dict(path_dict, poi)
     # ph.save(output_dir)
 
-    output_dir = get_plot("charge_resolution/ce_comparison/opct20")
-    path_dict = {
-        "Cross-Correlation, 5MHz": MCLab_Opct20_5MHz(),
-        "Window Integration, 5MHz": MCLab_Opct20_Window_5MHz(),
-        "Cross-Correlation, 125MHz": MCLab_Opct20_125MHz(),
-        "Window Integration, 125MHz": MCLab_Opct20_Window_125MHz(),
-    }
-    ph = PlotHandler()
-    ph.plot_pixel_from_dict(path_dict, poi)
-    ph.save(output_dir)
+    # output_dir = get_plot("charge_resolution/ce_comparison/opct20")
+    # path_dict = {
+    #     "Cross-Correlation, 5MHz": MCLab_Opct20_5MHz(),
+    #     "Window Integration, 5MHz": MCLab_Opct20_Window_5MHz(),
+    #     "Cross-Correlation, 125MHz": MCLab_Opct20_125MHz(),
+    #     "Window Integration, 125MHz": MCLab_Opct20_Window_125MHz(),
+    # }
+    # ph = PlotHandler()
+    # ph.plot_pixel_from_dict(path_dict, poi)
+    # ph.save(output_dir)
 
     # output_dir = get_plot("charge_resolution/ce_comparison/high_noise")
     # path_dict = {
@@ -167,6 +179,21 @@ def main():
     # ph = PlotHandler()
     # ph.plot_pixel_from_dict(path_dict, poi)
     # ph.save(output_dir)
+
+    output_dir = get_plot("charge_resolution/ce_comparison/onsky")
+    path_dict = {
+        "CC Local Peak-Finding, 5MHz": MCOnSky_5MHz_CC_Local(mc_true=True),
+        "CC Neighbour Peak-Finding, 5MHz": MCOnSky_5MHz_CC_Neighbour(mc_true=True),
+        # "CC Local Peak-Finding, 125MHz": MCOnSky_125MHz_CC_Local(mc_true=True),
+        # "CC Neighbour Peak-Finding, 125MHz": MCOnSky_125MHz_CC_Neighbour(mc_true=True),
+        "Window Local Peak-Finding, 5MHz": MCOnSky_5MHz_Window_Local(mc_true=True),
+        "Window Neighbour Peak-Finding, 5MHz": MCOnSky_5MHz_Window_Neighbour(mc_true=True),
+        # "Window Local Peak-Finding, 125MHz": MCOnSky_125MHz_Window_Local(mc_true=True),
+        # "Window Neighbour Peak-Finding, 125MHz": MCOnSky_125MHz_Window_Neighbour(mc_true=True),
+    }
+    ph = PlotHandler()
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.save(output_dir)
 
 
 if __name__ == '__main__':

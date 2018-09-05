@@ -60,17 +60,17 @@ def process(input_path, output_path, plot_event=None):
 
 
 def main():
-    # input_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/run43515.simtel.gz"
-    # output_path = get_data("charge_extraction_window/amp1nsb5.h5")
-    # process(input_path, output_path)
-    #
-    # input_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/run43495.simtel.gz"
-    # output_path = get_data("charge_extraction_window/amp50nsb5.h5")
-    # process(input_path, output_path)
-    #
-    # input_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/125mhz/run43515.simtel.gz"
-    # output_path = get_data("charge_extraction_window/amp1nsb125.h5")
-    # process(input_path, output_path)
+    input_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/run43515.simtel.gz"
+    output_path = get_data("charge_extraction_window/amp1nsb5.h5")
+    process(input_path, output_path)
+
+    input_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/5mhz/run43495.simtel.gz"
+    output_path = get_data("charge_extraction_window/amp50nsb5.h5")
+    process(input_path, output_path)
+
+    input_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/125mhz/run43515.simtel.gz"
+    output_path = get_data("charge_extraction_window/amp1nsb125.h5")
+    process(input_path, output_path)
 
     input_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/125mhz/run43495.simtel.gz"
     output_path = get_data("charge_extraction_window/amp50nsb125.h5")

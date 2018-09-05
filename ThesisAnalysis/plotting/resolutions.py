@@ -38,20 +38,30 @@ class ChargeResolutionPlotter(ThesisPlotter):
     def _plot(self, x, y, yerr, label=''):
         color = self.ax._get_lines.get_next_color()
         (_, caps, _) = self.ax.errorbar(
-            x, y, yerr=None, mew=1, capsize=3, elinewidth=0.7,
+            x, y, yerr=yerr, mew=1, capsize=3, elinewidth=0.7,
             markersize=3, color=color, label=label
         )
         for cap in caps:
             cap.set_markeredgewidth(0.7)
 
+    @staticmethod
+    def bin_dataframe(df):
+        true = df['true'].values
+        min_ = true.min()
+        max_ = true.max()
+        bins = np.geomspace(0.1, max_, 50)
+        df['bin'] = np.digitize(true, bins)
+        df_mean = df.groupby(['pixel', 'bin']).mean()
+        return df_mean
+
     def plot_pixel(self, pixel, label=''):
-        df_pixel = self.df_pixel.loc[self.df_pixel['pixel'] == pixel]
-        x = df_pixel['true']
-        y = df_pixel['charge_resolution']
-        yerr = 1 / np.sqrt(x)
-
-        x, y, yerr = bin_points(x, y, yerr)
-
+        df_binned = self.bin_dataframe(self.df_pixel)
+        df_pixel = df_binned.loc[pixel]
+        bin_ = df_pixel.index
+        x = df_pixel['true'].values
+        y = df_pixel['charge_resolution'].values
+        df_camera_std = df_binned.reset_index().groupby("bin").std()
+        yerr = df_camera_std['charge_resolution'].loc[bin_]
         self._plot(x, y, yerr, label)
 
     def plot_camera(self, label=''):
@@ -148,6 +158,7 @@ class ChargeResolutionPlotter(ThesisPlotter):
 class ChargeResolutionWRRPlotter(ChargeResolutionPlotter):
     def _plot(self, x, y, yerr, label=''):
         y = y / self.requirement(x)
+        yerr = yerr / self.requirement(x)
         super()._plot(x, y, yerr, label)
 
     def plot_requirement(self, true):
@@ -184,7 +195,6 @@ class ChargeMeanPlotter(ThesisPlotter):
     def _plot(self, x, y, yerr, label=''):
         y /= x
         yerr /= x
-        # yerr = None
         color = self.ax._get_lines.get_next_color()
 
         (_, caps, _) = self.ax.errorbar(
@@ -199,12 +209,26 @@ class ChargeMeanPlotter(ThesisPlotter):
         if self.x_max is None or self.x_max < x.max():
             self.x_max = x.max()
 
+    @staticmethod
+    def bin_dataframe(df):
+        df = df.loc[df['amplitude'] > 0].copy()
+        amplitude = df['amplitude'].values
+        min_ = amplitude.min()
+        max_ = amplitude.max()
+        bins = np.geomspace(0.1, max_, 50)
+        df['bin'] = np.digitize(amplitude, bins)
+        df_mean = df.groupby(['pixel', 'bin']).mean()
+        df_sub = df[['pixel', 'bin', 'std']]
+        df_mean['std'] = df_sub.groupby(['pixel', 'bin']).agg(sum_errors)
+        return df_mean
+
     def plot_pixel(self, pixel, label=''):
-        df_pixel = self.df_pixel.loc[self.df_pixel['pixel'] == pixel]
-        x = df_pixel['amplitude']
-        y = df_pixel['mean']
-        yerr = df_pixel['std']
-        x, y, yerr = bin_points(x, y, yerr)
+        df_binned = self.bin_dataframe(self.df_pixel)
+        df_pixel = df_binned.loc[pixel]
+        bin_ = df_pixel.index
+        x = df_pixel['amplitude'].values
+        y = df_pixel['mean'].values
+        yerr = df_pixel['std'].values
         self._plot(x, y, yerr, label)
 
     def plot_camera(self, label=''):

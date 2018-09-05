@@ -38,7 +38,7 @@ def process(file):
         yerr = df_p_std['charge'].values
         yerr[np.isnan(yerr)] = 1000
         yerr[yerr == 0] = 1000
-        c, m = polyfit(x, y, [1], w=1/yerr)
+        c, m = polyfit(x, y, [1], w=y/yerr)
         m_array[p] = m
 
     df_calib = pd.DataFrame(dict(
