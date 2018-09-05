@@ -46,7 +46,6 @@ class Waveform(ThesisPlotter):
         y2 = np.zeros(wf.size)[s]
         self.ax.fill_between(x, y1, y2, lw=0, color='blue', alpha=0.5)
         self.ax.text(71, 3, "Signal Pulse", color='blue')
-        self.ax.text(76, -2, "(Signal Undershoot)", color='blue')
 
         s = np.s_[11:54]
         x = np.arange(wf.size)[s]
@@ -69,30 +68,10 @@ class Waveform(ThesisPlotter):
         self.ax.axvline(global_max, ls='--', color='black')
         self.ax.text(global_max+1, -2, "Global Peak Time", color='black', rotation=90, va='bottom')
 
-        # size = 5
-        # shift = 2
-        #
-        # t_max = wf.argmax()
-        # start = t_max - shift
-        # end = start + size - 1
-        # self.ax.axvspan(start, end, hatch='/', color='blue', fill=False)
-        # self.ax.text(end + 1, 6, "ON", color='blue')
-        #
-        # self.ax.axvline(t_max, linestyle='--', color='gray')
-        # self.ax.arrow(t_max, 0.4, -shift, 0, color='gray', head_width=0.1,
-        #               head_length=0.5, length_includes_head=True)
-        # self.ax.text(start, 0.4, "Shift = 2", color='gray', ha='right', va='bottom', rotation=90)
-        # self.ax.arrow(start, 0.2, size-1, 0, color='gray', head_width=0.1,
-        #               head_length=0.5, length_includes_head=True)
-        # self.ax.text(end+0.5, 0.2, "Size = 5", color='gray', ha='left', va='bottom', rotation=90)
-        #
-        # start = 0
-        # end = start + size - 1
-        # self.ax.axvspan(start, end, hatch='/', color='red', fill=False)
-        # self.ax.text(end + 1, 6, "OFF", color='red')
-        # self.ax.arrow(start, 0.2, size-1, 0, color='gray', head_width=0.1,
-        #               head_length=0.5, length_includes_head=True)
-        # self.ax.text(end+0.5, 0.2, "Size = 5", color='gray', ha='left', va='bottom', rotation=90)
+        s = np.s_[100:115]
+        x = np.arange(wf.size)
+        self.ax.plot(x[s], wf[s], color='green')
+        self.ax.text(90, -2, "Electronic Noise", color='green')
 
         self.ax.set_xlabel("Time (ns)")
         self.ax.set_ylabel("Amplitude (mV)")
