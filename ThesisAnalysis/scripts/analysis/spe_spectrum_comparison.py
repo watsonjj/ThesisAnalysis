@@ -29,7 +29,7 @@ class SPEPlotter(ThesisPlotter):
 
         self.add_legend()
         self.ax.set_xlabel("Charge (p.e.)")
-        self.ax.set_ylabel("Count Percentage")
+        self.ax.set_ylabel("Normalised Counts")
 
 
 class SPEPlotterTable(SPEPlotter):
@@ -70,22 +70,28 @@ class SPEPlotterTable(SPEPlotter):
         table.set_fontsize(10)
 
 
-def process(path):
-    with ThesisHDF5Reader(path) as reader:
+def process(input_path, output_path):
+    with ThesisHDF5Reader(input_path) as reader:
         df = reader.read("data")
 
     p_spe = SPEPlotter()
     p_spe.plot(df)
-    p_spe.save(get_plot("spe_spectrum/spe_comparison.pdf"))
+    p_spe.save(output_path)
 
+    table_path = os.path.splitext(output_path)[0] + "_table.pdf"
     p_spe_table = SPEPlotterTable()
     p_spe_table.plot(df)
-    p_spe_table.save(get_plot("spe_spectrum/spe_comparison_table.pdf"))
+    p_spe_table.save(table_path)
 
 
 def main():
-    path = get_data("spe_spectrum_comparison.h5")
-    process(path)
+    input_path = get_data("spe_spectrum_comparison/mc_lab.h5")
+    output_path = get_plot("spe_spectrum_comparison/mc_lab.pdf")
+    process(input_path, output_path)
+
+    input_path = get_data("spe_spectrum_comparison/checm_checs.h5")
+    output_path = get_plot("spe_spectrum_comparison/checm_checs.pdf")
+    process(input_path, output_path)
 
 
 if __name__ == '__main__':

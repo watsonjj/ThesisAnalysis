@@ -40,7 +40,8 @@ def copyex(src, chapter, file=None):
 # copy("tf/lookup_tc.pdf", "ch5")
 # copy("pulse_raw_vs_pedestal.pdf", "ch5")
 # copy("saturation_recovery.pdf", "ch5")
-copy("tf/tf_pulse_fit.pdf", "ch5")
+# copy("tf/tf_pulse_fit.pdf", "ch5")
+copy("spe_spectrum_comparison/checm_checs.pdf", "ch5", "spe_checm_checs.pdf")
 
 # copy("annotated_waveform/checs_3pe.pdf", "ch6", "annotated_wf_3pe.pdf")
 # copy("cross_correlation/cc_tmax.pdf", "ch6")

@@ -155,6 +155,7 @@ class MCLab_Opct40_Window_5MHz(MCLab_Opct40_Window):
         super().__init__(**kwargs)
         self.runlist_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/window_extractor/5mhz/runlist.txt"
         self.spe_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/3_opct40/window_extractor/5mhz/spe.h5"
+        self.spe_config_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/4_opct40/window_extractor/5mhz/config.yml"
 
     def is_abstract(self):
         return False
@@ -182,6 +183,7 @@ class MCLab_Opct20_Window_5MHz(MCLab_Opct20_Window):
         super().__init__(**kwargs)
         self.runlist_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/4_opct20/window_extractor/5mhz/runlist.txt"
         self.spe_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/4_opct20/window_extractor/5mhz/spe.h5"
+        self.spe_config_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/4_opct20/window_extractor/5mhz/config.yml"
 
     def is_abstract(self):
         return False
@@ -219,6 +221,7 @@ class MCLab_Opct20_5MHz(MCLab_Opct20):
         super().__init__(**kwargs)
         self.runlist_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/4_opct20/5mhz/runlist.txt"
         self.spe_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/4_opct20/5mhz/spe.h5"
+        self.spe_config_path = "/Volumes/gct-jason/thesis_data/checs/mc/dynrange/4_opct20/5mhz/config.yml"
 
     def is_abstract(self):
         return False
@@ -513,10 +516,6 @@ class CHECM(File):
             "/Volumes/gct-jason/thesis_data/checm/spe/Run00072_dl1.h5",
             "/Volumes/gct-jason/thesis_data/checm/spe/Run00073_dl1.h5"
         ]
-        df = open_runlist_dl1(self.runlist_path, open_readers=False)
-        path_list = df.iloc[-7:-4]['path'].tolist()
-        from IPython import embed
-        embed()
         return path_list
 
     def is_abstract(self):

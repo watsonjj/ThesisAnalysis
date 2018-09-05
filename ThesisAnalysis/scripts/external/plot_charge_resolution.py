@@ -140,14 +140,14 @@ def main():
     # ph.save(output_dir)
 
 
-    output_dir = get_plot("charge_resolution/ce_comparison/lab")
-    path_dict = {
-        "Cross-Correlation": Lab_TFPoly(),
-        "Window Integration": Lab_Window(),
-    }
-    ph = PlotHandler()
-    ph.plot_pixel_from_dict(path_dict, poi)
-    ph.save(output_dir)
+    # output_dir = get_plot("charge_resolution/ce_comparison/lab")
+    # path_dict = {
+    #     "Cross-Correlation": Lab_TFPoly(),
+    #     "Window Integration": Lab_Window(),
+    # }
+    # ph = PlotHandler()
+    # ph.plot_pixel_from_dict(path_dict, poi)
+    # ph.save(output_dir)
 
     # output_dir = get_plot("charge_resolution/ce_comparison/opct40")
     # path_dict = {
@@ -182,14 +182,14 @@ def main():
 
     output_dir = get_plot("charge_resolution/ce_comparison/onsky")
     path_dict = {
-        "CC Local Peak-Finding, 5MHz": MCOnSky_5MHz_CC_Local(mc_true=True),
-        "CC Neighbour Peak-Finding, 5MHz": MCOnSky_5MHz_CC_Neighbour(mc_true=True),
-        # "CC Local Peak-Finding, 125MHz": MCOnSky_125MHz_CC_Local(mc_true=True),
-        # "CC Neighbour Peak-Finding, 125MHz": MCOnSky_125MHz_CC_Neighbour(mc_true=True),
-        "Window Local Peak-Finding, 5MHz": MCOnSky_5MHz_Window_Local(mc_true=True),
-        "Window Neighbour Peak-Finding, 5MHz": MCOnSky_5MHz_Window_Neighbour(mc_true=True),
-        # "Window Local Peak-Finding, 125MHz": MCOnSky_125MHz_Window_Local(mc_true=True),
-        # "Window Neighbour Peak-Finding, 125MHz": MCOnSky_125MHz_Window_Neighbour(mc_true=True),
+        # "CC Local Peak-Finding, 5MHz": MCOnSky_5MHz_CC_Local(mc_true=True),
+        # "CC Neighbour Peak-Finding, 5MHz": MCOnSky_5MHz_CC_Neighbour(mc_true=True),
+        "CC Local Peak-Finding, 125MHz": MCOnSky_125MHz_CC_Local(mc_true=True),
+        "CC Neighbour Peak-Finding, 125MHz": MCOnSky_125MHz_CC_Neighbour(mc_true=True),
+        # "Window Local Peak-Finding, 5MHz": MCOnSky_5MHz_Window_Local(mc_true=True),
+        # "Window Neighbour Peak-Finding, 5MHz": MCOnSky_5MHz_Window_Neighbour(mc_true=True),
+        "Window Local Peak-Finding, 125MHz": MCOnSky_125MHz_Window_Local(mc_true=True),
+        "Window Neighbour Peak-Finding, 125MHz": MCOnSky_125MHz_Window_Neighbour(mc_true=True),
     }
     ph = PlotHandler()
     ph.plot_pixel_from_dict(path_dict, poi)
