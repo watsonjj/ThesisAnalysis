@@ -6,36 +6,6 @@ from matplotlib.colors import LogNorm
 from IPython import embed
 
 
-class Image(ThesisPlotter):
-    def plot(self, x, y, z):
-
-        xp = x[np.nanargmax(z)]
-        yp = y[np.nanargmax(z)]
-        zp_max = np.nanmax(z)
-        zp_min = np.nanmin(z)
-        self.ax.plot(xp, yp, 'x', color='red', ms=4)
-        self.ax.text(xp+0.5, yp+1, '({}, {})'.format(xp, yp), color='red')
-        # levels = np.linspace(0, zp_max, 21)
-        levels = np.linspace(zp_min, zp_max, 21)
-
-
-        nx = np.arange(np.min(x), np.max(x) + 2) - 0.5
-        ny = np.arange(np.min(y), np.max(y) + 2) - 0.5
-        # counts, xbins, ybins = np.histogram2d(x, y, weights=z, bins=(nx, ny))
-        counts, xbins, ybins, image = self.ax.hist2d(x, y, weights=z, bins=(nx, ny))
-        image = self.ax.contourf(counts.T, extent=[xbins[0], xbins[-1], ybins[0], ybins[-1]], levels=levels)
-
-
-
-        self.fig.colorbar(image, label="Signal-to-Noise")
-
-        # self.ax.minorticks_off()
-        # self.ax.xaxis.set_major_locator(MultipleLocator(2))
-        # self.ax.yaxis.set_major_locator(MultipleLocator(2))
-        self.ax.set_xlabel('Integration-Window Size')
-        self.ax.set_ylabel('Integration-Window Shift')
-
-
 class Waveform(ThesisPlotter):
     def plot(self, wf):
         self.ax.plot(wf, color='black')
