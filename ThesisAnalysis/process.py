@@ -96,6 +96,7 @@ def process_analysis():
     analysis.tf_lookup.main()
     analysis.charge_extraction_window.main()
     analysis.annotated_waveform.main()
+    analysis.cross_correlation.main()
 
 
 def main():

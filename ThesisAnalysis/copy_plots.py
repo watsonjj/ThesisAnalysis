@@ -41,7 +41,10 @@ def copyex(src, chapter, file=None):
 # copy("pulse_raw_vs_pedestal.pdf", "ch5")
 # copy("saturation_recovery.pdf", "ch5")
 
-copy("annotated_waveform/checs_3pe.pdf", "ch5", "annotated_wf_3pe.pdf")
+copy("annotated_waveform/checs_3pe.pdf", "ch6", "annotated_wf_3pe.pdf")
+copy("cross_correlation/cc_tmax.pdf", "ch6")
+copy("cross_correlation/cc_tnsb.pdf", "ch6")
+copy("cross_correlation/cc_tnoise.pdf", "ch6")
 
 # External
 #
