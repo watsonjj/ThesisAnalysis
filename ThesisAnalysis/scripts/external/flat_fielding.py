@@ -4,34 +4,48 @@ from ThesisAnalysis.files import calib_files
 import numpy as np
 import pandas as pd
 import os
-from numpy.polynomial.polynomial import polyfit
+from numpy.polynomial.polynomial import polyfit, polyval
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import FuncFormatter
+from IPython import embed
 
 
 class FitPlotter(ThesisPlotter):
-    def plot(self, x, y, yerr, flag, c, m):
+    def plot(self, x, y, xerr, yerr, flag, c, m, merr):
 
-        x_fit = np.geomspace(0.1, 1000, 1000)
-        y_fit = m * x_fit
+        x_fit = np.geomspace(0.1, 1000, 20)
+        y_fit = (m + merr) * x_fit
+        yerr_fit = merr * x_fit
 
-        (_, caps, _) = self.ax.errorbar(x[~flag], y[~flag], yerr=yerr[~flag],
-                                        fmt='o', mew=1,
+        (_, caps, _) = self.ax.errorbar(x[~flag], y[~flag],
+                                        xerr=xerr[~flag], yerr=yerr[~flag],
+                                        fmt='o', mew=1, zorder=1,
                                         markersize=3, capsize=3,
                                         elinewidth=0.7, label="")
         for cap in caps:
             cap.set_markeredgewidth(0.7)
 
         color = self.ax._get_lines.get_next_color()
-        self.ax.plot(x_fit, y_fit, color=color, label="Linear Regression")
+        # (_, caps, _) = self.ax.errorbar(x_fit, y_fit, yerr=yerr_fit,
+        #                                 mew=1, markersize=3, capsize=3,
+        #                                 elinewidth=0.7, color=color,
+        #                                 label="Linear Regression")
+        # for cap in caps:
+        #     cap.set_markeredgewidth(0.7)
+        self.ax.plot(x_fit, y_fit, color=color,
+                     zorder=2, label="Linear Regression")
 
-        (_, caps, _) = self.ax.errorbar(x[flag], y[flag], yerr=yerr[flag],
+        (_, caps, _) = self.ax.errorbar(x[flag], y[flag],
+                                        xerr=xerr[flag], yerr=yerr[flag],
                                         fmt='o', mew=1, color=color,
                                         markersize=3, capsize=3,
-                                        elinewidth=0.7,
+                                        elinewidth=0.7, zorder=1,
                                         label="Regressed Points")
         for cap in caps:
             cap.set_markeredgewidth(0.7)
+
+        t = r"$\gamma_{{M_i}} = \SI[separate-uncertainty = true]{{{:#.2f} \pm {:#.2f}}}{{mVns/\pe}}$"
+        self.ax.text(0.5, 0.4, t.format(m, merr), transform=self.ax.transAxes)
 
         self.ax.set_xscale('log')
         self.ax.get_xaxis().set_major_formatter(
@@ -41,7 +55,7 @@ class FitPlotter(ThesisPlotter):
         self.ax.get_yaxis().set_major_formatter(
             FuncFormatter(lambda yl, _: '{:g}'.format(yl)))
 
-        self.ax.set_xlabel("Expected Charge (p.e.)")
+        self.ax.set_xlabel("Average Expected Charge (p.e.)")
         self.ax.set_ylabel("Average Measured Charge (mV ns)")
         self.add_legend('best')
 
@@ -68,7 +82,7 @@ class Hist2D(ThesisPlotter):
         self.ax.get_yaxis().set_major_formatter(
             FuncFormatter(lambda yl, _: '{:g}'.format(yl)))
 
-        self.ax.set_xlabel("Expected Charge (p.e.)")
+        self.ax.set_xlabel("Average Expected Charge (p.e.)")
         self.ax.set_ylabel("Average Measured Charge (mV ns)")
         cbar.set_label("N")
 
@@ -88,10 +102,12 @@ def process(file, poi=888):
     with ThesisHDF5Reader(fw_path) as reader:
         df_fw = reader.read("data")
         fw_m = df_fw['fw_m'].values
+        fw_merr = df_fw['fw_merr'].values
 
     pixel = df_avg['pixel'].values
     transmission = df_avg['transmission'].values
     df_avg['illumination'] = transmission * fw_m[pixel]
+    df_avg['illumination_err'] = transmission * fw_merr[pixel]
     # df_avg['illumination'] = df_avg['pe_expected']
 
     # pe_expected = df_avg['pe_expected']
@@ -102,26 +118,35 @@ def process(file, poi=888):
 
         df_p = df_avg.loc[df_avg['pixel'] == pix]
         true = df_p['illumination'].values
+        true_err = df_p['illumination_err'].values
         measured = df_p['mean'].values
         measured_std = df_p['std'].values
 
         flag = np.zeros(true.size, dtype=np.bool)
         flag[np.abs(true - 50).argsort()[:3]] = True
 
-        true_f = true[flag]
-        measured_f = measured[flag]
-        measured_std_f = measured_std[flag]
+        x = true[flag]
+        y = measured[flag]
 
-        ff_c, ff_m = polyfit(true_f, measured_f, [1], w=1 / measured_std_f)
+        p, f = polyfit(x, y, [1], full=True)
+        ff_c, ff_m = p
+
+        n = x.size
+        sy = np.sqrt(np.sum((y - polyval(x, p))**2) / (n - 1))
+        sm = sy * np.sqrt(1/(np.sum((x - np.mean(x))**2)))
+        ff_merr = sm
+
         d_list.append(dict(
             pixel=pix,
             ff_c=ff_c,
-            ff_m=ff_m
+            ff_m=ff_m,
+            ff_merr=ff_merr,
         ))
 
         if pix == poi:
+            print("{:.3f} ± {:.3f}".format(ff_m, ff_merr))
             p_fit = FitPlotter()
-            p_fit.plot(true, measured, measured_std, flag, ff_c, ff_m)
+            p_fit.plot(true, measured, true_err, measured_std, flag, ff_c, ff_m, ff_merr)
             p_fit.save(os.path.join(output_dir, "flat_fielding.pdf"))
 
     df_calib = pd.DataFrame(d_list)

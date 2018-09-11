@@ -23,14 +23,16 @@ def bin_points(x, y, yerr):
 
 
 class ChargeResolutionPlotter(ThesisPlotter):
-    def __init__(self):
+    def __init__(self, plot_std=True):
         super().__init__()
         self.df_pixel = None
         self.df_camera = None
+        self.plot_std = plot_std
 
-    def set_path(self, path):
+    def set_path(self, path, dead):
         with ThesisHDF5Reader(path) as reader:
-            self.df_pixel = reader.read('charge_resolution_pixel')
+            df_p = reader.read('charge_resolution_pixel')
+            self.df_pixel = df_p.loc[~df_p['pixel'].isin(dead)]
             self.df_camera = reader.read('charge_resolution_camera')
             # self.df_pixel = self.df_pixel.loc[self.df_pixel['true'] > 0.001]
             # self.df_camera = self.df_camera.loc[self.df_camera['true'] > 0.001]
@@ -61,7 +63,9 @@ class ChargeResolutionPlotter(ThesisPlotter):
         x = df_pixel['true'].values
         y = df_pixel['charge_resolution'].values
         df_camera_std = df_binned.reset_index().groupby("bin").std()
-        yerr = df_camera_std['charge_resolution'].loc[bin_]
+        yerr = None
+        if self.plot_std:
+            yerr = df_camera_std['charge_resolution'].loc[bin_]
         self._plot(x, y, yerr, label)
 
     def plot_camera(self, label=''):
@@ -74,7 +78,7 @@ class ChargeResolutionPlotter(ThesisPlotter):
         self._plot(x, y, yerr, label)
 
     def finish(self):
-        self.ax.set_xlabel("Expected Charge (p.e.)")
+        self.ax.set_xlabel("Average Expected Charge (p.e.)")
         self.ax.set_ylabel(r"Fractional Charge Resolution $\frac{{\sigma_Q}}{{Q}}$")
         self.ax.set_xscale('log')
         self.ax.get_xaxis().set_major_formatter(
@@ -158,7 +162,8 @@ class ChargeResolutionPlotter(ThesisPlotter):
 class ChargeResolutionWRRPlotter(ChargeResolutionPlotter):
     def _plot(self, x, y, yerr, label=''):
         y = y / self.requirement(x)
-        yerr = yerr / self.requirement(x)
+        if yerr is not None:
+            yerr = yerr / self.requirement(x)
         super()._plot(x, y, yerr, label)
 
     def plot_requirement(self, true):
@@ -172,8 +177,8 @@ class ChargeResolutionWRRPlotter(ChargeResolutionPlotter):
         self.ax.plot(true, poisson, '--', color='grey', label="Poisson")
 
     def finish(self):
-        self.ax.set_xlabel("Expected Charge (p.e.)")
-        self.ax.set_ylabel(r"Fractional Charge Resolution $\frac{{\sigma_Q}}{{Q}}$ / Requirement")
+        self.ax.set_xlabel("Average Expected Charge (p.e.)")
+        self.ax.set_ylabel(r"$\frac{{\sigma_Q}}{{Q}}$ / Requirement")
         self.ax.set_xscale('log')
         self.ax.get_xaxis().set_major_formatter(
             FuncFormatter(lambda x, _: '{:g}'.format(x)))
@@ -195,6 +200,7 @@ class ChargeMeanPlotter(ThesisPlotter):
     def _plot(self, x, y, yerr, label=''):
         y /= x
         yerr /= x
+        # yerr = None
         color = self.ax._get_lines.get_next_color()
 
         (_, caps, _) = self.ax.errorbar(
@@ -209,26 +215,12 @@ class ChargeMeanPlotter(ThesisPlotter):
         if self.x_max is None or self.x_max < x.max():
             self.x_max = x.max()
 
-    @staticmethod
-    def bin_dataframe(df):
-        df = df.loc[df['amplitude'] > 0].copy()
-        amplitude = df['amplitude'].values
-        min_ = amplitude.min()
-        max_ = amplitude.max()
-        bins = np.geomspace(0.1, max_, 50)
-        df['bin'] = np.digitize(amplitude, bins)
-        df_mean = df.groupby(['pixel', 'bin']).mean()
-        df_sub = df[['pixel', 'bin', 'std']]
-        df_mean['std'] = df_sub.groupby(['pixel', 'bin']).agg(sum_errors)
-        return df_mean
-
     def plot_pixel(self, pixel, label=''):
-        df_binned = self.bin_dataframe(self.df_pixel)
-        df_pixel = df_binned.loc[pixel]
-        bin_ = df_pixel.index
-        x = df_pixel['amplitude'].values
-        y = df_pixel['mean'].values
-        yerr = df_pixel['std'].values
+        df_pixel = self.df_pixel.loc[self.df_pixel['pixel'] == pixel]
+        x = df_pixel['amplitude']
+        y = df_pixel['mean']
+        yerr = df_pixel['std']
+        x, y, yerr = bin_points(x, y, yerr)
         self._plot(x, y, yerr, label)
 
     def plot_camera(self, label=''):
@@ -242,8 +234,8 @@ class ChargeMeanPlotter(ThesisPlotter):
         p = np.linspace(self.x_min, self.x_max, 1000)
         self.ax.plot(p, p/p, '--', color='grey')
 
-        self.ax.set_xlabel("Expected Charge (p.e.)")
-        self.ax.set_ylabel("Average Measured Charge / Expected Charge")
+        self.ax.set_xlabel("Average Expected Charge (p.e.)")
+        self.ax.set_ylabel("Average Measured Charge / Average Expected Charge")
         self.ax.set_xscale('log')
         self.ax.get_xaxis().set_major_formatter(
             FuncFormatter(lambda x, _: '{:g}'.format(x)))

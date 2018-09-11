@@ -48,17 +48,30 @@ class File(metaclass=ABCMeta):
     def is_abstract(self):
         return True
 
-    def get_run_with_illumination_r1(self, illumination):
-        df = open_runlist_r1(self.runlist_path, open_readers=False)
+    def get_dataframe(self, r1=False, open_readers=True):
+        if r1:
+            df = open_runlist_r1(self.runlist_path, open_readers)
+        else:
+            df = open_runlist_dl1(self.runlist_path, open_readers)
         df['transmission'] = 1/df['fw_atten']
 
         with ThesisHDF5Reader(self.fw_path) as reader:
             fw_m = reader.read_metadata()['fw_m_camera']
+            fw_merr = reader.read_metadata()['fw_merr_camera']
 
         df['expected'] = df['transmission'] * fw_m
+        df['expected_err'] = df['transmission'] * fw_merr
+        return df
+
+    def get_run_with_illumination(self, illumination, r1=False):
+        df = self.get_dataframe(r1=r1, open_readers=False)
         idxmin = np.abs(df['expected'] - illumination).idxmin()
+        expected = df.loc[idxmin]['expected']
+        epected_err = df.loc[idxmin]['expected_err']
+        print("Run at illumination {:.3f} ± {:.3f} p.e. obtained".format(expected, epected_err))
         path = df.loc[idxmin]['path']
-        return path
+        return path, expected, epected_err
+
 
 class MC(File):
     def __init__(self, mc_true=False, **kwargs):
@@ -358,7 +371,7 @@ class Lab(File):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.illumination_profile_path = get_data("mc_illumination_profile_correction.h5")  # TODO: get lab_illumination_profile_correction.h5
-        self.dead = [677, 293, 27, 1925]
+        self.dead = [677, 293, 27, 1925, 1955]
 
 
 class Lab_TFNone(Lab):
@@ -523,26 +536,28 @@ class CHECM(File):
 
 
 all_files = [
-    MCLab_Opct40_0MHz(),
-    MCLab_Opct40_5MHz(),
-    MCLab_Opct40_125MHz(),
-    MCLab_Opct20_5MHz(),
-    MCLab_Opct20_125MHz(),
-    MCLab_Opct40_Window_5MHz(),
-    MCLab_Opct40_Window_125MHz(),
-    MCLab_Opct20_Window_5MHz(),
-    MCLab_Opct20_Window_125MHz(),
-    MCLab_Opct20_Window_5MHz_HEN(),
-    MCLab_Opct20_CC_5MHz_HEN(),
-    Lab_TFNone(),
-    Lab_TFPchip(),
+    # MCLab_Opct40_0MHz(),
+    # MCLab_Opct40_5MHz(),
+    # MCLab_Opct40_40MHz(),
+    # MCLab_Opct40_125MHz(),
+    # MCLab_Opct40_1200MHz(),
+    # MCLab_Opct20_5MHz(),
+    # MCLab_Opct20_125MHz(),
+    # MCLab_Opct40_Window_5MHz(),
+    # MCLab_Opct40_Window_125MHz(),
+    # MCLab_Opct20_Window_5MHz(),
+    # MCLab_Opct20_Window_125MHz(),
+    # MCLab_Opct20_Window_5MHz_HEN(),
+    # MCLab_Opct20_CC_5MHz_HEN(),
+    # Lab_TFNone(),
+    # Lab_TFPchip(),
     Lab_TFPoly(),
-    Lab_TFWithPed(),
-    Lab_GM50ADC(),
-    Lab_GM100ADC(),
-    Lab_GM200ADC(),
-    Lab_Window(),
-    CHECM(),
+    # Lab_TFWithPed(),
+    # Lab_GM50ADC(),
+    # Lab_GM100ADC(),
+    # Lab_GM200ADC(),
+    # Lab_Window(),
+    # CHECM(),
 ]
 
 fw_correction_original_files = [
@@ -557,19 +572,19 @@ fw_correction_post_files = [
 ]
 
 calib_files = [
-    MCLab_Opct40_5MHz(),
-    MCLab_Opct20_5MHz(),
-    MCLab_Opct40_Window_5MHz(),
-    MCLab_Opct20_Window_5MHz(),
-    Lab_TFNone(),
-    Lab_TFPchip(),
+    # MCLab_Opct40_5MHz(),
+    # MCLab_Opct20_5MHz(),
+    # MCLab_Opct40_Window_5MHz(),
+    # MCLab_Opct20_Window_5MHz(),
+    # Lab_TFNone(),
+    # Lab_TFPchip(),
     Lab_TFPoly(),
-    Lab_TFWithPed(),
-    Lab_GM50ADC(),
-    Lab_GM100ADC(),
-    Lab_GM200ADC(),
-    Lab_Window(),
-    CHECM(),
+    # Lab_TFWithPed(),
+    # Lab_GM50ADC(),
+    # Lab_GM100ADC(),
+    # Lab_GM200ADC(),
+    # Lab_Window(),
+    # CHECM(),
 ]
 
 spe_files = [
@@ -599,7 +614,9 @@ mc_onsky_calib_files = [
 mc_files = [
     # MCLab_Opct40_0MHz(),
     # MCLab_Opct40_5MHz(),
+    MCLab_Opct40_40MHz(),
     # MCLab_Opct40_125MHz(),
+    MCLab_Opct40_1200MHz(),
     # MCLab_Opct20_5MHz(),
     # MCLab_Opct20_125MHz(),
     # MCLab_Opct40_Window_5MHz(),
@@ -608,12 +625,12 @@ mc_files = [
     # MCLab_Opct20_Window_125MHz(),
     # MCLab_Opct20_Window_5MHz_HEN(),
     # MCLab_Opct20_CC_5MHz_HEN(),
-    MCOnSky_5MHz_CC_Local(),
-    MCOnSky_5MHz_CC_Neighbour(),
-    MCOnSky_5MHz_Window_Local(),
-    MCOnSky_5MHz_Window_Neighbour(),
-    MCOnSky_125MHz_CC_Local(),
-    MCOnSky_125MHz_CC_Neighbour(),
-    MCOnSky_125MHz_Window_Local(),
-    MCOnSky_125MHz_Window_Neighbour(),
+    # MCOnSky_5MHz_CC_Local(),
+    # MCOnSky_5MHz_CC_Neighbour(),
+    # MCOnSky_5MHz_Window_Local(),
+    # MCOnSky_5MHz_Window_Neighbour(),
+    # MCOnSky_125MHz_CC_Local(),
+    # MCOnSky_125MHz_CC_Neighbour(),
+    # MCOnSky_125MHz_Window_Local(),
+    # MCOnSky_125MHz_Window_Neighbour(),
 ]

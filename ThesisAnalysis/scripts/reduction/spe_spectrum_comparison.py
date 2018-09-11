@@ -39,6 +39,10 @@ def get_dict(type, input_paths, config_path, roi, poi, fitter):
 
     fitx = np.linspace(fitter.range[0], fitter.range[1], 1000)
     coeff = fitter.coeff.copy()
+    errors0 = fitter.errors.copy()
+    errors = dict()
+    for key, value in errors0.items():
+        errors['error_' + key] = value
     spe = coeff['spe']
     print(spe)
 
@@ -50,7 +54,8 @@ def get_dict(type, input_paths, config_path, roi, poi, fitter):
         hist=fitter.hist[roi],
         fit=fitter.fit_function(fitx, **coeff)[roi],
         roi=roi,
-        **coeff
+        **coeff,
+        **errors
     )
 
 
@@ -79,7 +84,7 @@ def process(comparison_list, output_path):
 
 def main():
     comp = [
-        dict(name="MC-Lab", file=MCLab_Opct40_5MHz(), roi=2, fitter=GentileFitter),
+        dict(name="Simulation", file=MCLab_Opct40_5MHz(), roi=2, fitter=GentileFitter),
         dict(name="Lab", file=Lab_TFPoly(), roi=1, fitter=GentileFitter),
     ]
     output_path = get_data("spe_spectrum_comparison/mc_lab.h5")

@@ -18,18 +18,19 @@ class SPEPlotter(ThesisPlotter):
             between = row['between']
             fitx = row['fitx']
             lambda_ = row['lambda_{}'.format(row['roi'])]
-            hist = row['hist'] / norm
+            lambda_err = row['error_lambda_{}'.format(row['roi'])]
+            hist = row['hist']# / norm
             fit = row['fit'] / norm
 
             color = next(self.ax._get_lines.prop_cycler)['color']
             self.ax.hist(between, bins=edges, weights=hist, histtype='step',
-                         color=color)
+                         color=color, normed=True)
             self.ax.plot(fitx, fit, color=color,
-                         label="{} ({:.3f} p.e.)".format(type_, lambda_))
+                         label="{} ({:.3f} ± {:.3f} p.e.)".format(type_, lambda_, lambda_err))
 
         self.add_legend()
         self.ax.set_xlabel("Charge (p.e.)")
-        self.ax.set_ylabel("Normalised Counts")
+        self.ax.set_ylabel("Count Density")
 
 
 class SPEPlotterTable(SPEPlotter):
@@ -45,26 +46,39 @@ class SPEPlotterTable(SPEPlotter):
 
         type_list = []
         coeff_list = []
+        errors_list = []
         for _, row in df.iterrows():
             type_ = row['type']
-            spe = row['spe']
             coeff = dict(
                 lambda_0=row['lambda_0'],
                 lambda_1=row['lambda_1'],
                 lambda_2=row['lambda_2'],
-                eped=row['eped']/spe,
-                eped_sigma=row['eped_sigma']/spe,
-                spe=1,
-                spe_sigma=row['spe_sigma']/spe,
+                eped=row['eped'],
+                eped_sigma=row['eped_sigma'],
+                spe=row['spe'],
+                spe_sigma=row['spe_sigma'],
                 opct=row['opct'],
+            )
+            errors = dict(
+                lambda_0=row['error_lambda_0'],
+                lambda_1=row['error_lambda_1'],
+                lambda_2=row['error_lambda_2'],
+                eped=row['error_eped'],
+                eped_sigma=row['error_eped_sigma'],
+                spe=row['error_spe'],
+                spe_sigma=row['error_spe_sigma'],
+                opct=row['error_opct'],
             )
             type_list.append(type_)
             coeff_list.append(coeff)
+            errors_list.append(errors)
 
         self.ax_t.axis('off')
         columns = [*type_list]
         rows = list(coeff_list[0].keys())
-        cells = [['%.3g' % coeff_list[0][i], '%.3g' % coeff_list[1][i]] for i in rows]
+        cells = [['%.3g ± %.3g' % (coeff_list[0][i], errors_list[0][i]),
+                  '%.3g ± %.3g' % (coeff_list[1][i], errors_list[1][i])]
+                 for i in rows]
         table = self.ax_t.table(cellText=cells, rowLabels=rows,
                                 colLabels=columns, loc='center')
         table.set_fontsize(10)

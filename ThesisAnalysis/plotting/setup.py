@@ -63,6 +63,9 @@ class ThesisPlotter:
                 r"\usepackage[T1]{fontenc}", # plots will be generated using this preamble
                 r"\usepackage{amsmath}",
                 r"\usepackage{pgfplots}",
+                r"\usepackage{siunitx}",
+                r"\DeclareSIUnit{\pe}{{p.e.}}",
+                r"\newcommand*\average[1]{\bar{#1}}"
             ]
         }
 

@@ -26,7 +26,7 @@ class ScatterPlotter(ThesisPlotter):
         self.ax.get_yaxis().set_major_formatter(
             FuncFormatter(lambda yl, _: '{:g}'.format(yl)))
 
-        self.ax.set_xlabel("Expected Charge (p.e.)")
+        self.ax.set_xlabel("Average Expected Charge (p.e.)")
         self.ax.set_ylabel("Saturation Coefficient (mV ns)")
 
 

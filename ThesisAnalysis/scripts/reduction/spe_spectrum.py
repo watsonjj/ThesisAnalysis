@@ -33,6 +33,7 @@ def process(file):
 
     fitx = np.linspace(fitter.range[0], fitter.range[1], 1000)
     coeff = fitter.coeff.copy()
+    errors = fitter.errors.copy()
 
     d = dict(
         edges=fitter.edges,
@@ -45,11 +46,16 @@ def process(file):
 
     df_array = pd.DataFrame([d])
     df_coeff = pd.DataFrame(coeff, index=[0])
+    df_errors = pd.DataFrame(errors, index=[0])
 
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', PerformanceWarning)
         with ThesisHDF5Writer(output_path) as writer:
-            writer.write(array=df_array, coeff=df_coeff)
+            writer.write(
+                array=df_array,
+                coeff=df_coeff,
+                errors=df_errors,
+            )
             writer.write_mapping(mapping)
             writer.write_metadata(n_illuminations=n_illuminations)
 

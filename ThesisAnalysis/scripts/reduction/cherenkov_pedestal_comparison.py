@@ -2,7 +2,7 @@ from ThesisAnalysis import get_data, ThesisHDF5Writer
 import numpy as np
 import pandas as pd
 from CHECLabPy.core.io import TIOReader
-from CHECLabPy.waveform_reducers.ctapipe import \
+from CHECLabPy.waveform_reducers.ctapipe_integrators import \
     CtapipeNeighbourPeakIntegrator
 
 

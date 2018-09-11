@@ -2,7 +2,7 @@ from ThesisAnalysis.plotting.setup import ThesisPlotter
 from ThesisAnalysis import get_data, get_plot, ThesisHDF5Reader
 import os
 import numpy as np
-from matplotlib.ticker import MultipleLocator
+from matplotlib.ticker import MultipleLocator, FuncFormatter
 from target_calib import CalculateRowColumnBlockPhase, GetCellIDTCArray
 
 
@@ -30,31 +30,38 @@ def setup_cells(df, camera):
 
 
 class Hist(ThesisPlotter):
-    def __init__(self):
+    def __init__(self, units):
         super().__init__()
 
+        self.units = units
         self.ax2 = self.ax.twiny()
 
     def plot(self, r0, r1):
-        c1 = next(self.ax._get_lines.prop_cycler)['color']
         c2 = next(self.ax._get_lines.prop_cycler)['color']
+        c1 = next(self.ax._get_lines.prop_cycler)['color']
 
-        label = "Mean = {:.3f}, Stddev = {:.3f}, N = {:.3e}"
-        label_r0 = label.format(r0.mean(), r0.std(), r0.size)
-        label_r1 = label.format(r1.mean(), r1.std(), r1.size)
+        label = ("Before Pedestal Subtraction\n"
+                 r"$(\mu = \SI{{{:.3g}}}{{ADC}}, \sigma = \SI{{{:#.3g}}}{{ADC}})$")
+        label_r0 = label.format(r0.mean(), r0.std())
+        label = ("After Pedestal Subtraction\n"
+                 r"$(\mu = \SI{{{:#.3g}}}{{{}}}, \sigma = \SI{{{:#.3g}}}{{{}}})$")
+        label_r1 = label.format(r1.mean(), self.units, r1.std(), self.units)
 
         self.ax2.hist(r0, bins=40, color=c2, alpha=0.5, label=label_r0)
-        self.ax.hist(r1, bins=40, color=c1, alpha=0.5, label=label_r1)
+        self.ax.hist(r1, bins=40, color=c1, alpha=0.7, label=label_r1)
 
         self.ax.set_ylabel('Counts')
-        self.ax2.set_xlabel('Raw Samples (ADC)')
+        self.ax2.set_xlabel(r'Raw Samples ($\si{{{}}}$)'.format(self.units))
         self.ax2.tick_params('x', which='both', colors=c2)
-        self.ax.set_xlabel('Pedestal-Subtracted Samples (ADC)')
+        self.ax.set_xlabel(r'Pedestal-Subtracted Samples ($\si{{{}}}$)'.format(self.units))
         self.ax.tick_params('x', which='both', colors=c1)
+
+        self.ax.get_yaxis().set_major_formatter(
+            FuncFormatter(lambda yl, _: r'$\SI{{{:.1e}}}{{}}$'.format(yl)))
 
         lines, labels = self.ax.get_legend_handles_labels()
         lines2, labels2 = self.ax2.get_legend_handles_labels()
-        self.ax.legend(lines + lines2, labels + labels2, loc=2)
+        self.ax.legend(lines2 + lines, labels2 + labels, loc=2)
 
 
 class HistChunk(ThesisPlotter):
@@ -141,7 +148,7 @@ class BlockPlotter(ThesisPlotter):
         self.add_legend('best', title="Block Position in Waveform")
 
 
-def process(camera, input_path):
+def process(camera, input_path, units):
     with ThesisHDF5Reader(input_path) as reader:
         df = reader.read("data")
 
@@ -152,7 +159,7 @@ def process(camera, input_path):
 
     output_dir = get_plot("pedestal/{}".format(camera))
 
-    p_hist = Hist()
+    p_hist = Hist(units)
     p_hist.plot(r0, r1)
     p_hist.save(os.path.join(output_dir, "pedestal_hist.pdf"))
 
@@ -185,19 +192,23 @@ def process(camera, input_path):
 def main():
     camera = "checs"
     input_path = get_data("pedestal/pedestal_checs.h5")
-    process(camera, input_path)
+    units = "ADC"
+    process(camera, input_path, units)
 
     camera = "checs_mV"
     input_path = get_data("pedestal/pedestal_checs_mV.h5")
-    process(camera, input_path)
+    units = "mV"
+    process(camera, input_path, units)
 
     camera = "checs_pe"
     input_path = get_data("pedestal/pedestal_checs_pe.h5")
-    process(camera, input_path)
+    units = "\pe"
+    process(camera, input_path, units)
 
     camera = "checm"
     input_path = get_data("pedestal/pedestal_checm.h5")
-    process(camera, input_path)
+    units = "ADC"
+    process(camera, input_path, units)
 
 
 if __name__ == '__main__':

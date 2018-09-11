@@ -1,4 +1,4 @@
-from ThesisAnalysis import get_data, ThesisHDF5Writer
+from ThesisAnalysis import get_data, ThesisHDF5Writer, ThesisHDF5Reader
 import numpy as np
 import pandas as pd
 from CHECLabPy.core.io import TIOReader
@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 
 def process(r0_path, r1_path, output_path, poi,
-            even_events=False, spe_path=None):
+            even_events=False, ff_path=None):
 
     r0_reader = TIOReader(r0_path)
     r1_reader = TIOReader(r1_path)
@@ -17,14 +17,15 @@ def process(r0_path, r1_path, output_path, poi,
     samples = np.arange(n_samples, dtype=np.uint16)
 
     mvtope = 1
-    if spe_path:
-        store_spe = pd.HDFStore(spe_path)
-        df_spe = store_spe['coeff_pixel']
-        mvtope_cc = df_spe['spe'].mean()
+    if ff_path:
+        with ThesisHDF5Reader(ff_path) as reader:
+            df = reader.read("data")
+            gamma_q = df['gamma_q'].values[0]
+
         ref_path = r1_reader.reference_pulse_path
         cc = CrossCorrelation(n_pixels, n_samples,
                               reference_pulse_path=ref_path)
-        mvtope = cc.get_pulse_height(mvtope_cc)
+        mvtope = cc.get_pulse_height(gamma_q)
 
     df_list = []
 
@@ -36,7 +37,7 @@ def process(r0_path, r1_path, output_path, poi,
                 continue
         fci = np.asscalar(r0_reader.first_cell_ids[poi])
 
-        r1 /= mvtope
+        r1 = r1 / mvtope
 
         df_list.append(pd.DataFrame(dict(
             iev=iev,
@@ -70,8 +71,8 @@ def main():
     r0_path = "/Volumes/gct-jason/thesis_data/checs/lab/pedestal/Pedestals.tio"
     r1_path = "/Volumes/gct-jason/thesis_data/checs/lab/pedestal/Pedestals_r1_mV.tio"
     output_path = get_data("pedestal/pedestal_checs_pe.h5")
-    spe_path = "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_poly/spe.h5"
-    process(r0_path, r1_path, output_path, poi, True, spe_path)
+    ff_path = get_data("ff_values.h5")
+    process(r0_path, r1_path, output_path, poi, True, ff_path)
 
     poi = 30
     r0_path = "/Volumes/gct-jason/thesis_data/checm/pedestal/Run00053_r0.tio"

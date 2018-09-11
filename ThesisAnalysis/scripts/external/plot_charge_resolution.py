@@ -7,20 +7,27 @@ import numpy as np
 
 
 class PlotHandler:
-    def __init__(self):
-        self.p_cr = ChargeResolutionPlotter()
-        self.p_crwrr = ChargeResolutionWRRPlotter()
+    def __init__(self, plot_cr_std=True):
+        self.p_cr = ChargeResolutionPlotter(plot_std=plot_cr_std)
+        self.p_crwrr = ChargeResolutionWRRPlotter(plot_std=plot_cr_std)
         self.p_mean = ChargeMeanPlotter()
+
+        true = np.geomspace(0.1, 2000, 1000)
+        self.p_cr.plot_requirement(true)
+        self.p_cr.plot_poisson(true)
+        self.p_crwrr.plot_requirement(true)
+        self.p_crwrr.plot_poisson(true)
 
     def plot_pixel(self, file, label, poi):
         path = file.charge_resolution_path
+        dead = file.dead
 
-        self.p_cr.set_path(path)
-        self.p_cr.plot_pixel(poi, label + " (pixel {})".format(poi))
-        self.p_crwrr.set_path(path)
-        self.p_crwrr.plot_pixel(poi, label + " (pixel {})".format(poi))
+        self.p_cr.set_path(path, dead)
+        self.p_cr.plot_pixel(poi, label)
+        self.p_crwrr.set_path(path, dead)
+        self.p_crwrr.plot_pixel(poi, label)
         self.p_mean.set_path(path)
-        self.p_mean.plot_pixel(poi, label + " (pixel {})".format(poi))
+        self.p_mean.plot_pixel(poi, label)
 
     def plot_camera(self, file, label):
         path = file.charge_resolution_path
@@ -41,12 +48,7 @@ class PlotHandler:
             self.plot_camera(path, label)
 
     def save(self, output_dir, loc="best"):
-        true = np.geomspace(0.1, 2000, 1000)
-        self.p_cr.plot_requirement(true)
-        self.p_cr.plot_poisson(true)
         self.p_cr.add_legend(loc)
-        self.p_crwrr.plot_requirement(true)
-        self.p_crwrr.plot_poisson(true)
         self.p_crwrr.add_legend(loc)
         self.p_mean.add_legend(loc)
 
@@ -58,28 +60,100 @@ class PlotHandler:
 def main():
     poi = 888
 
-    # output_dir = get_plot("charge_resolution/lab_vs_mc")
-    # path_dict = {
-    #     "MC-Lab 0MHz": MCLab_Opct40_0MHz(),
-    #     "MC-Lab 5MHz": MCLab_Opct40_5MHz(),
-    #     "MC-Lab 125MHz": MCLab_Opct40_125MHz(),
-    #     "Lab (TF-Poly)": Lab_TFPoly(),
-    # }
-    # ph = PlotHandler()
-    # ph.plot_pixel_from_dict(path_dict, poi)
-    # ph.save(output_dir)
-    #
-    # output_dir = get_plot("charge_resolution/tf_comparison")
-    # path_dict = {
-    #     "Lab (No TF)": Lab_TFNone(),
-    #     "Lab (TF-PCHIP)": Lab_TFPchip(),
-    #     "Lab (TF-Poly)": Lab_TFPoly(),
-    #     "Lab (TF-WithPedestal)": Lab_TFWithPed(),
-    # }
-    # ph = PlotHandler()
-    # ph.plot_pixel_from_dict(path_dict, poi)
-    # ph.save(output_dir)
-    #
+    output_dir = get_plot("charge_resolution/1_lab")
+    path_dict = {
+        "Lab": Lab_TFPoly(),
+    }
+    ph = PlotHandler()
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.save(output_dir)
+
+    output_dir = get_plot("charge_resolution/2_lab_vs_mc")
+    path_dict = {
+        "Lab": Lab_TFPoly(),
+        "MCLab": MCLab_Opct40_5MHz(),
+        "MCLabTrue": MCLab_Opct40_5MHz(mc_true=True),
+        "MCOnsky": MCOnSky_5MHz_CC_Local(mc_true=True),
+    }
+    ph = PlotHandler()
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.p_crwrr.ax.set_ylim(top=1.2)
+    ph.save(output_dir)
+
+    output_dir = get_plot("charge_resolution/3_nsb_comparison/MCLab")
+    path_dict = {
+        "0MHz": MCLab_Opct40_0MHz(),
+        "5MHz": MCLab_Opct40_5MHz(),
+        "40MHz": MCLab_Opct40_40MHz(),
+        "125MHz": MCLab_Opct40_125MHz(),
+        "1200MHz": MCLab_Opct40_1200MHz(),
+    }
+    ph = PlotHandler(plot_cr_std=False)
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.save(output_dir)
+
+    output_dir = get_plot("charge_resolution/3_nsb_comparison/MCLabTrue")
+    path_dict = {
+        "0MHz": MCLab_Opct40_0MHz(mc_true=True),
+        "5MHz": MCLab_Opct40_5MHz(mc_true=True),
+        "40MHz": MCLab_Opct40_40MHz(mc_true=True),
+        "125MHz": MCLab_Opct40_125MHz(mc_true=True),
+        "1200MHz": MCLab_Opct40_1200MHz(mc_true=True),
+    }
+    ph = PlotHandler(plot_cr_std=False)
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.save(output_dir)
+
+    output_dir = get_plot("charge_resolution/3_nsb_comparison/MCOnsky")
+    path_dict = {
+        "5MHz": MCOnSky_5MHz_CC_Local(mc_true=True),
+        "125MHz": MCOnSky_125MHz_CC_Local(mc_true=True),
+    }
+    ph = PlotHandler(plot_cr_std=False)
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.save(output_dir)
+
+
+    output_dir = get_plot("charge_resolution/4_opct/mc")
+    path_dict = {
+        "OPCT40, 5MHz": MCLab_Opct40_5MHz(),
+        "OPCT40, 125MHz": MCLab_Opct40_125MHz(),
+        "OPCT20, 5MHz": MCLab_Opct20_5MHz(),
+        "OPCT20, 125MHz": MCLab_Opct20_125MHz(),
+    }
+    ph = PlotHandler(plot_cr_std=False)
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.save(output_dir)
+
+    output_dir = get_plot("charge_resolution/4_opct/biasvoltage")
+    path_dict = {
+        "200ADC-GM": Lab_GM200ADC(),
+        "100ADC-GM": Lab_GM100ADC(),
+        "50ADC-GM": Lab_GM50ADC(),
+    }
+    ph = PlotHandler(plot_cr_std=False)
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.p_crwrr.ax.set_ylim(top=1.2)
+    ph.save(output_dir)
+
+    output_dir = get_plot("charge_resolution/5_tf_comparison")
+    path_dict = {
+        "Lab (No TF)": Lab_TFNone(),
+        "Lab (TF-PCHIP)": Lab_TFPchip(),
+        "Lab (TF-Poly)": Lab_TFPoly(),
+        "Lab (TF-WithPedestal)": Lab_TFWithPed(),
+    }
+    ph = PlotHandler()
+    ph.plot_pixel_from_dict(path_dict, poi)
+    ph.p_crwrr.ax.set_ylim(top=3)
+    ph.save(output_dir)
+
+
+
+
+
+
+
     # output_dir = get_plot("charge_resolution/50ADC_vs_100ADC_vs_200ADC")
     # path_dict = {
     #     "Lab 200ADV-GM (TF-Poly)": Lab_GM200ADC(),

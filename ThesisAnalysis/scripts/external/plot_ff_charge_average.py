@@ -39,7 +39,7 @@ class FitPlotter(ThesisPlotter):
         self.ax.get_yaxis().set_major_formatter(
             FuncFormatter(lambda yl, _: '{:g}'.format(yl)))
 
-        self.ax.set_xlabel("Expected Charge (p.e.)")
+        self.ax.set_xlabel("Average Expected Charge (p.e.)")
         self.ax.set_ylabel("Average Measured Charge (mV)")
         self.add_legend('best')
 
@@ -66,7 +66,7 @@ class Hist2D(ThesisPlotter):
         self.ax.get_yaxis().set_major_formatter(
             FuncFormatter(lambda yl, _: '{:g}'.format(yl)))
 
-        self.ax.set_xlabel("Expected Charge (p.e.)")
+        self.ax.set_xlabel("Average Expected Charge (p.e.)")
         self.ax.set_ylabel("Average Measured Charge (mV)")
         cbar.set_label("N")
 
