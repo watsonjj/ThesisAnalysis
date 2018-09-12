@@ -5,7 +5,7 @@ import pandas as pd
 
 
 def process(file, illumination, eoi, poi, output_path):
-    input_path = file.get_run_with_illumination_r1(illumination)
+    input_path, _, _ = file.get_run_with_illumination(illumination, True)
     reader = TIOReader(input_path, max_events=1000)
 
     wf = reader[eoi][poi]

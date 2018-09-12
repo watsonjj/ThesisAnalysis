@@ -50,11 +50,11 @@ def process_fw_correction_check():
 
 
 def process_external():
-    # external.fw_calibration.main()
-    # external.charge_averages.main()
-    # external.flat_fielding.main()
-    # external.charge_before_after.main()
-    # external.fw_correction.main()
+    external.fw_calibration.main()
+    external.charge_averages.main()
+    external.flat_fielding.main()
+    external.charge_before_after.main()
+    external.fw_correction.main()
     external.charge_resolution.main()
     external.mc_calibration.main()
     external.charge_resolution_mc.main()
@@ -101,13 +101,13 @@ def process_analysis():
 
 
 def main():
-    # process_illumination_profiles()
-    # process_fw_correction()
-    # process_fw_correction_check()
+    process_illumination_profiles()
+    process_fw_correction()
+    process_fw_correction_check()
     process_external()
-    # process_external_plots()
-    # process_reduction()
-    # process_analysis()
+    process_external_plots()
+    process_reduction()
+    process_analysis()
 
 
 if __name__ == '__main__':
