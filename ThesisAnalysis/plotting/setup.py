@@ -28,6 +28,7 @@ class ThesisPlotter:
             "axes.titlesize": 10,
             "axes.labelsize": 10,        # LaTeX default is 10pt font.
             "legend.fontsize": 8,        # Make the legend/label fonts a little smaller
+            "axes.prop_cycle": plt.cycler(color=plt.cm.Dark2.colors),
 
             # Set x axis
             "xtick.labelsize": 8,

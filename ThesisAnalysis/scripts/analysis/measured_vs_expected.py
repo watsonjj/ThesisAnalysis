@@ -34,7 +34,7 @@ class Hist2D(ThesisPlotter):
             FuncFormatter(lambda yl, _: '{:g}'.format(yl)))
 
         self.ax.set_xlabel("Average Expected Charge (p.e.)")
-        self.ax.set_ylabel("Average Measured Charge (p.e.)")
+        self.ax.set_ylabel("Measured Charge (p.e.)")
         cbar.set_label("N")
 
 
@@ -46,16 +46,15 @@ class ScatterPlotter(ThesisPlotter):
 
         x = df_mean.index.values
         y = df_mean['measured'].values
-        xerr = np.sqrt(x)
+        xerr = df_mean['true_err'].values
         yerr = df_std['measured'].values
 
-        (_, caps, _) = self.ax.errorbar(x, y, xerr=xerr, yerr=yerr,
-                                        fmt='o', mew=1,
-                                        markersize=3, capsize=3,
-                                        elinewidth=0.7, color='black',
-                                        zorder=1)
+        (_, caps, _) = self.ax.errorbar(
+            x, y, xerr=xerr, yerr=yerr, mew=1, capsize=1, elinewidth=0.5,
+            markersize=2, color='black', linewidth=0.5, fmt='.', zorder=1,
+        )
         for cap in caps:
-            cap.set_markeredgewidth(0.7)
+            cap.set_markeredgewidth(0.5)
 
         self.ax.plot(x, x, ':', color='grey', zorder=2)
 
@@ -74,10 +73,10 @@ def process(input_file, hist_path, scatter_path):
 
     with ThesisHDF5Reader(input_file) as reader:
         df = reader.read("data")
-    #
-    # p_hist = Hist2D()
-    # p_hist.plot(df)
-    # p_hist.save(hist_path)
+
+    p_hist = Hist2D()
+    p_hist.plot(df)
+    p_hist.save(hist_path)
 
     p_scatter = ScatterPlotter()
     p_scatter.plot(df)

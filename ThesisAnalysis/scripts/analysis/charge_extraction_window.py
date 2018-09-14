@@ -13,8 +13,8 @@ class Image(ThesisPlotter):
         yp = y[np.nanargmax(z)]
         zp_max = np.nanmax(z)
         zp_min = np.nanmin(z)
-        self.ax.plot(xp, yp, 'x', color='red', ms=4)
-        self.ax.text(xp+0.5, yp+1, '({}, {})'.format(xp, yp), color='red')
+        self.ax.plot(xp, yp, 'x', color='black', ms=4)
+        self.ax.text(xp+0.5, yp+1, '({}, {})'.format(xp, yp), color='black')
         # levels = np.linspace(0, zp_max, 21)
         levels = np.linspace(zp_min, zp_max, 21)
 
@@ -46,8 +46,9 @@ class Waveform(ThesisPlotter):
         t_max = wf.argmax()
         start = t_max - shift
         end = start + size - 1
-        self.ax.axvspan(start, end, hatch='/', color='blue', fill=False)
-        self.ax.text(end + 1, 6, "ON", color='blue')
+        color = next(self.ax._get_lines.prop_cycler)['color']
+        self.ax.axvspan(start, end, hatch='/', color=color, fill=False)
+        self.ax.text(end + 1, 6, "ON", color=color)
 
         self.ax.axvline(t_max, linestyle='--', color='gray')
         self.ax.arrow(t_max, 0.4, -shift, 0, color='gray', head_width=0.1,
@@ -59,8 +60,9 @@ class Waveform(ThesisPlotter):
 
         start = 0
         end = start + size - 1
-        self.ax.axvspan(start, end, hatch='/', color='red', fill=False)
-        self.ax.text(end + 1, 6, "OFF", color='red')
+        color = next(self.ax._get_lines.prop_cycler)['color']
+        self.ax.axvspan(start, end, hatch='/', color=color, fill=False)
+        self.ax.text(end + 1, 6, "OFF", color=color)
         self.ax.arrow(start, 0.2, size-1, 0, color='gray', head_width=0.1,
                       head_length=0.5, length_includes_head=True)
         self.ax.text(end+0.5, 0.2, "Size = 5", color='gray', ha='left', va='bottom', rotation=90)

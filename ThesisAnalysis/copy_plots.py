@@ -20,6 +20,7 @@ copy("charge_extraction_window/amp1nsb5.pdf", "a3")
 copy("charge_extraction_window/amp1nsb125.pdf", "a3")
 copy("charge_extraction_window/amp50nsb5.pdf", "a3")
 copy("charge_extraction_window/amp50nsb125.pdf", "a3")
+copy("charge_extraction_window/charge_extraction_window_wf.pdf", "a3")
 
 copy("fw_correction/gain-matching-original/fw_correction.pdf", "ch2")
 copy("fw_correction/gain-matching-original/measured_versus_transmission.pdf", "ch2")
@@ -51,7 +52,27 @@ copy("cross_correlation/cc_tnsb.pdf", "ch6")
 copy("cross_correlation/cc_tnoise.pdf", "ch6")
 
 copy("spe_spectrum_comparison/mc_lab.pdf", "ch7", "spe_sim_lab.pdf")
+copy("measured_vs_expected/checs/measured_vs_expected_hist.pdf", "ch7", "checs_mve_hist.pdf")
+copy("measured_vs_expected/checs/measured_vs_expected_scatter.pdf", "ch7", "checs_mve_scatter.pdf")
+copy("charge_resolution/1_lab/charge_res.pdf", "ch7", "cr_1_lab_raw.pdf")
+copy("charge_resolution/1_lab/charge_res_wrr.pdf", "ch7", "cr_1_lab.pdf")
+copy("charge_resolution/2_lab_vs_mc/charge_res_wrr.pdf", "ch7", "cr_2_lab_vs_mc.pdf")
+copy("charge_resolution/3_nsb_comparison/MCLab/charge_res_wrr.pdf", "ch7", "cr_3_nsb_comparison_mclab.pdf")
+copy("charge_resolution/3_nsb_comparison/MCLabTrue/charge_res_wrr.pdf", "ch7", "cr_3_nsb_comparison_mclabtrue.pdf")
+copy("charge_resolution/3_nsb_comparison/MCOnsky/charge_res_wrr.pdf", "ch7", "cr_3_nsb_comparison_mconsky.pdf")
+copy("charge_resolution/4_opct/mc/charge_res_wrr.pdf", "ch7", "cr_4_opct_mc.pdf")
+copy("charge_resolution/4_opct/biasvoltage/charge_res_wrr.pdf", "ch7", "cr_4_opct_biasvoltage.pdf")
+copy("charge_resolution/5_camera_comparison/charge_res_wrr.pdf", "ch7", "cr_5_camera_comparison.pdf")
+copy("charge_resolution/6_tf_comparison/charge_res_wrr.pdf", "ch7", "cr_6_tf_comparison.pdf")
+copy("charge_resolution/7_fit/charge_res_wrr.pdf", "ch7", "cr_7_fit.pdf")
 
+
+
+
+
+
+copy("measured_vs_expected/checm/measured_vs_expected_hist.pdf", "ch7", "checm_mve_hist.pdf")
+copy("measured_vs_expected/checm/measured_vs_expected_scatter.pdf", "ch7", "checm_mve_scatter.pdf")
 
 
 # External

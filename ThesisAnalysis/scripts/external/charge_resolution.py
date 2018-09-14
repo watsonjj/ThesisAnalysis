@@ -4,6 +4,8 @@ import os
 from tqdm import tqdm
 from CHECLabPy.utils.files import open_runlist_dl1
 from CHECLabPy.utils.resolutions import ChargeStatistics, ChargeResolution
+import pandas as pd
+import numpy as np
 
 
 def process(file):
@@ -22,6 +24,7 @@ def process(file):
     with ThesisHDF5Reader(fw_path) as reader:
         df = reader.read("data")
         fw_m = df['fw_m'].values
+        fw_merr = df['fw_merr'].values
 
     with ThesisHDF5Reader(ff_path) as reader:
         df = reader.read("data")
@@ -49,6 +52,10 @@ def process(file):
         reader.store.close()
     df_cr_pixel, df_cr_camera = cr.finish()
     df_cs_pixel, df_cs_camera = cs.finish()
+
+    def add_error(df):
+        df['true_err'] = df['true'] / fw_m[df['pixel']] * fw_merr[df['pixel']]
+    add_error(df_cr_pixel)
 
     with ThesisHDF5Writer(output_path) as writer:
         writer.write(

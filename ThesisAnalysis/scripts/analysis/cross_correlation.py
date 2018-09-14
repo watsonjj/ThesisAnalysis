@@ -59,6 +59,9 @@ class CCPlot(ThesisPlotter):
         self.n_samples = None
         self.source = None
 
+        self.c1 = next(self.ax._get_lines.prop_cycler)['color']
+        self.c2 = next(self.ax._get_lines.prop_cycler)['color']
+
     @staticmethod
     def align_yaxis(ax1, ax2):
         """Align zeros of the two axes, zooming them out by same ratio"""
@@ -89,12 +92,12 @@ class CCPlot(ThesisPlotter):
         ref = python_cc.ref_t(t)
         multiply = python_cc.multiply(wf, t)
 
-        self.ax1.plot(wf, color='blue', label="Waveform")
-        self.ax1t.plot(ref, color='green', label="Reference")
-        self.ax2.plot(multiply)
-        self.ax3.plot(cc_result)
+        self.ax1.plot(wf, color=self.c1, label="Waveform")
+        self.ax1t.plot(ref, color=self.c2, label="Reference")
+        self.ax2.plot(multiply, color=self.c1)
+        self.ax3.plot(cc_result, color=self.c1)
 
-        l_tline = self.ax3.axvline(t, c='red')
+        l_tline = self.ax3.axvline(t, ls='--', c='black')
 
         self.align_yaxis(self.ax1, self.ax1t)
 
@@ -110,8 +113,8 @@ class CCPlot(ThesisPlotter):
         self.ax1.xaxis.set_major_locator(MultipleLocator(16))
         self.ax2.xaxis.set_major_locator(MultipleLocator(16))
         self.ax3.xaxis.set_major_locator(MultipleLocator(16))
-        self.ax1.tick_params(axis='y', labelcolor='blue')
-        self.ax1t.tick_params(axis='y', labelcolor='green')
+        self.ax1.tick_params(axis='y', labelcolor=self.c1)
+        self.ax1t.tick_params(axis='y', labelcolor=self.c2)
 
         self.ax1.yaxis.set_label_coords(-0.15, 0.5)
         self.ax2.yaxis.set_label_coords(-0.15, 0.5)

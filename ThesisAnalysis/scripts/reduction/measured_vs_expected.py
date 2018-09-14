@@ -21,6 +21,7 @@ def process(file, output_path):
     with ThesisHDF5Reader(fw_path) as reader:
         df = reader.read("data")
         fw_m = df['fw_m'].values
+        fw_merr = df['fw_merr'].values
 
     with ThesisHDF5Reader(ff_path) as reader:
         df = reader.read("data")
@@ -38,11 +39,13 @@ def process(file, output_path):
         pixel = df['pixel'].values
         charge = df['charge'].values
         true = transmission * fw_m[pixel]
+        true_err = transmission * fw_merr[pixel]
         measured = charge / ff_m[pixel]
 
         df_list.append(pd.DataFrame(dict(
             pixel=pixel,
             true=true,
+            true_err=true_err,
             measured=measured,
         )))
 
@@ -59,9 +62,9 @@ def process(file, output_path):
 
 
 def main():
-    # file = Lab_TFPoly()
-    # output_path = get_data("measured_vs_expected/measured_vs_expected_checs.h5")
-    # process(file, output_path)
+    file = Lab_TFPoly()
+    output_path = get_data("measured_vs_expected/measured_vs_expected_checs.h5")
+    process(file, output_path)
 
     file = CHECM()
     output_path = get_data("measured_vs_expected/measured_vs_expected_checm.h5")

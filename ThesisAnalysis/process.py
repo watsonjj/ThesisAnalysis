@@ -101,12 +101,12 @@ def process_analysis():
 
 
 def main():
-    process_illumination_profiles()
-    process_fw_correction()
-    process_fw_correction_check()
-    process_external()
+    # process_illumination_profiles()
+    # process_fw_correction()
+    # process_fw_correction_check()
+    # process_external()
     process_external_plots()
-    process_reduction()
+    # process_reduction()
     process_analysis()
 
 

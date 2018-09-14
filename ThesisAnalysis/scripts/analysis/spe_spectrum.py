@@ -85,7 +85,7 @@ def process(file):
 
 def main():
     [process(f) for f in spe_files]
-    # process(CHECM())
+    process(CHECM())
 
 
 if __name__ == '__main__':
