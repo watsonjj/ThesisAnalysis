@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 from subprocess import call
-import os
 import shutil
-from glob import glob
-import re
 from ThesisAnalysis.scripts import external
 from ThesisAnalysis.scripts import reduction
 from ThesisAnalysis.scripts import analysis
@@ -63,6 +60,7 @@ def process_external():
 def process_external_plots():
     external.plot_ff_charge_average.main()
     external.plot_charge_before_after.main()
+    external.charge_res_fit.main()
     external.plot_charge_resolution.main()
 
 
@@ -80,6 +78,7 @@ def process_reduction():
     reduction.tf_lookup.main()
     reduction.charge_extraction_window.main()
     reduction.annotated_waveform.main()
+    reduction.pulse_shape.main()
 
 
 def process_analysis():
@@ -98,6 +97,7 @@ def process_analysis():
     analysis.annotated_waveform.main()
     analysis.cross_correlation.main()
     analysis.tf_pulse_fit.main()
+    analysis.pulse_shape.main()
 
 
 def main():

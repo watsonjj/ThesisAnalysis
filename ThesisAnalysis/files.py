@@ -48,11 +48,11 @@ class File(metaclass=ABCMeta):
     def is_abstract(self):
         return True
 
-    def get_dataframe(self, r1=False, open_readers=True):
+    def get_dataframe(self, r1=False, **kwargs):
         if r1:
-            df = open_runlist_r1(self.runlist_path, open_readers)
+            df = open_runlist_r1(self.runlist_path, **kwargs)
         else:
-            df = open_runlist_dl1(self.runlist_path, open_readers)
+            df = open_runlist_dl1(self.runlist_path, **kwargs)
         df['transmission'] = 1/df['fw_atten']
 
         with ThesisHDF5Reader(self.fw_path) as reader:

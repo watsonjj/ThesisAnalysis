@@ -14,3 +14,4 @@ from . import charge_extraction_window
 from . import annotated_waveform
 from . import cross_correlation
 from . import tf_pulse_fit
+from . import pulse_shape

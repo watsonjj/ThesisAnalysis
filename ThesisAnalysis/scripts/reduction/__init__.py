@@ -12,3 +12,4 @@ from . import tf_generation
 from . import tf_lookup
 from . import charge_extraction_window
 from . import annotated_waveform
+from . import pulse_shape

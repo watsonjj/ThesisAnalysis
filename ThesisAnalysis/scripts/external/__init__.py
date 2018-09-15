@@ -9,3 +9,4 @@ from . import plot_charge_resolution
 from . import plot_charge_before_after
 from . import mc_calibration
 from . import charge_resolution_mc
+from . import charge_res_fit

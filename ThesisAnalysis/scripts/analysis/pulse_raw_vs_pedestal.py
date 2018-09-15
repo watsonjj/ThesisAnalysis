@@ -48,8 +48,8 @@ class Waveform(ThesisPlotter):
         self.axr0.plot(x, yr0, color=cr0)
 
         self.axr1.set_xlabel("Time (ns)")
-        self.axr1.set_ylabel("Amplitude (Pedestal-Subtracted ADC)", color=cr1)
-        self.axr0.set_ylabel("Amplitude (Raw ADC)", color=cr0)
+        self.axr1.set_ylabel("Amplitude (Pedestal-Subtracted ADC)")
+        self.axr0.set_ylabel("Amplitude (Raw ADC)")
         self.axr1.tick_params('y', which='both', colors=cr1)
         self.axr0.tick_params('y', which='both', colors=cr0)
 

@@ -7,7 +7,7 @@ from IPython import embed
 
 
 def sum_errors(array):
-    return np.sqrt(np.sum(np.power(array, 2))) / array.size
+    return np.sqrt(np.sum(np.power(array, 2)) / array.size)
 
 
 def bin_points(x, y, yerr):
@@ -23,23 +23,22 @@ def bin_points(x, y, yerr):
 
 
 class ChargeResolutionPlotter(ThesisPlotter):
-    def __init__(self, plot_yerr=True, plot_xerr=True, **kwargs):
+    def __init__(self, n_bins=40, **kwargs):
         super().__init__(**kwargs)
         self.df_pixel = None
         self.df_camera = None
-        self.plot_yerr = plot_yerr
-        self.plot_xerr = plot_xerr
+        self.n_bins = n_bins
 
         self.ax.set_xlabel("Average Expected Charge (p.e.)")
         self.ax.set_ylabel(r"Fractional Charge Resolution $\frac{{\sigma_Q}}{{Q}}$")
 
-    def set_path(self, path, dead):
+    def set_file(self, file):
+        path = file.charge_resolution_path
+        dead = file.dead
         with ThesisHDF5Reader(path) as reader:
             df_p = reader.read('charge_resolution_pixel')
             self.df_pixel = df_p.loc[~df_p['pixel'].isin(dead)]
             self.df_camera = reader.read('charge_resolution_camera')
-            # self.df_pixel = self.df_pixel.loc[self.df_pixel['true'] > 0.001]
-            # self.df_camera = self.df_camera.loc[self.df_camera['true'] > 0.001]
 
     def _plot(self, x, y, xerr, yerr, label=''):
         color = self.ax._get_lines.get_next_color()
@@ -51,40 +50,58 @@ class ChargeResolutionPlotter(ThesisPlotter):
             cap.set_markeredgewidth(0.5)
 
     @staticmethod
-    def bin_dataframe(df):
+    def bin_dataframe(df, n_bins=40):
         true = df['true'].values
         min_ = true.min()
-        max_ = true.max()
-        bins = np.geomspace(0.1, max_, 50)
-        df['bin'] = np.digitize(true, bins)
+        max_ = (true.max() // 500 + 1) * 500
+        bins = np.geomspace(0.1, max_, n_bins)
+        bins = np.append(bins, 10**(np.log10(bins[-1]) + np.diff(np.log10(bins))[0]))
+        df['bin'] = np.digitize(true, bins, right=True) - 1
+
+        log = np.log10(bins)
+        between = 10**((log[1:] + log[:-1]) / 2)
+        edges = np.repeat(bins, 2)[1:-1].reshape((bins.size-1 , 2))
+        edge_l = edges[:, 0]
+        edge_r = edges[:, 1]
+        df['between'] = between[df['bin']]
+        df['edge_l'] = edge_l[df['bin']]
+        df['edge_r'] = edge_r[df['bin']]
+
         return df
+
+    def plot_average(self, label='', n_bins=40):
+        df_binned = self.bin_dataframe(self.df_pixel, n_bins)
+        df_camera_mean = df_binned.groupby(['bin']).mean()
+        bin_ = df_camera_mean.index
+        x = df_camera_mean['true'].values
+        y = df_camera_mean['charge_resolution'].values
+        yerr = None
+        xerr = None
+        df_camera_std = df_binned.groupby(['bin']).std()
+        yerr = df_camera_std['charge_resolution'].loc[bin_].values
+        if 'true_err' in df_binned.columns:
+            df_err = df_binned[['bin', 'true_err']].groupby(['bin']).apply(sum_errors)
+            xerr = df_err['true_err'].loc[bin_].values
+        self._plot(x, y, xerr, yerr, label)
 
     def plot_pixel(self, pixel, label=''):
         df_binned = self.bin_dataframe(self.df_pixel)
-        df_mean = df_binned.groupby(['pixel', 'bin']).mean()
-        df_pixel = df_mean.loc[pixel]
-        bin_ = df_pixel.index
-        x = df_pixel['true'].values
-        y = df_pixel['charge_resolution'].values
+        df_p = df_binned.loc[df_binned['pixel'] == pixel]
+        df_mean = df_p.groupby('bin').mean()
+        bin_ = df_mean.index
+        x = df_mean['true'].values
+        y = df_mean['charge_resolution'].values
         yerr = None
         xerr = None
-        if self.plot_yerr:
-            df_camera_std = df_mean.reset_index().groupby("bin").std()
-            yerr = df_camera_std['charge_resolution'].loc[bin_].values
-        if self.plot_xerr and 'true_err' in df_binned.columns:
-            df_binned_p = df_binned.loc[df_binned['pixel'] == pixel]
-            df_err = df_binned_p[['bin', 'true_err']].groupby(['bin']).apply(sum_errors)
+        if 'true_err' in df_binned.columns:
+            df_err = df_p[['bin', 'true_err']].groupby(['bin']).apply(sum_errors)
             xerr = df_err['true_err'].loc[bin_].values
         self._plot(x, y, xerr, yerr, label)
 
     def plot_camera(self, label=''):
         x = self.df_camera['true']
         y = self.df_camera['charge_resolution']
-        yerr = 1 / np.sqrt(x)
-
-        x, y, yerr = bin_points(x, y, yerr)
-
-        self._plot(x, y, yerr, label)
+        self._plot(x, y, None, label)
 
     def finish(self):
         self.ax.set_xscale('log')
