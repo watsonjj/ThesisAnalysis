@@ -58,17 +58,17 @@ def process(input_path, output_path):
 
 
 def main():
-    # input_path = get_data("pulse_shape/pulse_shape_lab.h5")
-    # output_path = get_plot("pulse_shape/pulse_shape_lab.pdf")
-    # process(input_path, output_path)
-    #
-    # input_path = get_data("pulse_shape/pulse_shape_mc.h5")
-    # output_path = get_plot("pulse_shape/pulse_shape_mc.pdf")
-    # process(input_path, output_path)
-    #
-    # input_path = get_data("pulse_shape/pulse_shape_checm.h5")
-    # output_path = get_plot("pulse_shape/pulse_shape_checm.pdf")
-    # process(input_path, output_path)
+    input_path = get_data("pulse_shape/pulse_shape_lab.h5")
+    output_path = get_plot("pulse_shape/pulse_shape_lab.pdf")
+    process(input_path, output_path)
+
+    input_path = get_data("pulse_shape/pulse_shape_mc.h5")
+    output_path = get_plot("pulse_shape/pulse_shape_mc.pdf")
+    process(input_path, output_path)
+
+    input_path = get_data("pulse_shape/pulse_shape_checm.h5")
+    output_path = get_plot("pulse_shape/pulse_shape_checm.pdf")
+    process(input_path, output_path)
 
     input_path = get_data("pulse_shape/pulse_shape_tfwf.h5")
     output_path = get_plot("pulse_shape/pulse_shape_tfwf.pdf")

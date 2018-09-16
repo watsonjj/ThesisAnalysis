@@ -217,8 +217,7 @@ class CameraImage(ThesisPlotter):
         alpha: 0 <= alpha <= 1
             The transparency
         """
-
-        l = np.zeros_like(self.image)
+        l = np.zeros(self.image.shape)
         l[pixels] = linewidth
         self.pixel_highlighting.set_linewidth(l)
         self.pixel_highlighting.set_alpha(alpha)

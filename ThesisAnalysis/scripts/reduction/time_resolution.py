@@ -1,5 +1,5 @@
 from ThesisAnalysis import ThesisHDF5Writer, get_data, ThesisHDF5Reader
-from ThesisAnalysis.files import Lab_TFPoly, MCLab_Opct40_5MHz, CHECM, MCLab_Opct40_125MHz
+from ThesisAnalysis.files import Lab_TFPoly, MCLab_Opct40_Window_5MHz, CHECM, MCLab_Opct40_Window_125MHz
 import numpy as np
 import pandas as pd
 from tqdm import tqdm, trange
@@ -117,25 +117,25 @@ def process(file, time_corr_path, output_path):
 
 
 def main():
-    file = Lab_TFPoly()
-    time_corr_path = get_data("time_corrections/time_corrections_lab.h5")
-    output_path = get_data("time_resolution/lab.h5")
-    process(file, time_corr_path, output_path)
+    # file = Lab_TFPoly()
+    # time_corr_path = get_data("time_corrections/time_corrections_lab.h5")
+    # output_path = get_data("time_resolution/lab.h5")
+    # process(file, time_corr_path, output_path)
 
-    file = MCLab_Opct40_5MHz()
-    time_corr_path = get_data("time_corrections/time_corrections_mc.h5")
-    output_path = get_data("time_resolution/mc125.h5")
-    process(file, time_corr_path, output_path)
-
-    file = MCLab_Opct40_125MHz()
+    file = MCLab_Opct40_Window_5MHz()
     time_corr_path = get_data("time_corrections/time_corrections_mc.h5")
     output_path = get_data("time_resolution/mc.h5")
     process(file, time_corr_path, output_path)
 
-    file = CHECM()
-    time_corr_path = get_data("time_corrections/time_corrections_checm.h5")
-    output_path = get_data("time_resolution/checm.h5")
+    file = MCLab_Opct40_Window_125MHz()
+    time_corr_path = get_data("time_corrections/time_corrections_mc.h5")
+    output_path = get_data("time_resolution/mc125.h5")
     process(file, time_corr_path, output_path)
+
+    # file = CHECM()
+    # time_corr_path = get_data("time_corrections/time_corrections_checm.h5")
+    # output_path = get_data("time_resolution/checm.h5")
+    # process(file, time_corr_path, output_path)
 
 
 if __name__ == '__main__':

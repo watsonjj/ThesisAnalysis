@@ -141,17 +141,17 @@ def main():
     # file = Lab_TFPoly()
     # output_path = get_data("pulse_shape/pulse_shape_lab.h5")
     # process(file, output_path)
-    #
-    # file = MCLab_Opct40_5MHz()
-    # output_path = get_data("pulse_shape/pulse_shape_mc.h5")
-    # process(file, output_path)
-    #
+
+    file = MCLab_Opct40_5MHz()
+    output_path = get_data("pulse_shape/pulse_shape_mc.h5")
+    process(file, output_path)
+
     # file = CHECM()
     # output_path = get_data("pulse_shape/pulse_shape_checm.h5")
     # process(file, output_path)
-
-    output_path = get_data("pulse_shape/pulse_shape_tfwf.h5")
-    process_tf(output_path)
+    #
+    # output_path = get_data("pulse_shape/pulse_shape_tfwf.h5")
+    # process_tf(output_path)
 
 if __name__ == '__main__':
     main()

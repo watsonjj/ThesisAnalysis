@@ -47,7 +47,7 @@ def process():
     p = TimeResPlotter()
     p.plot_from_path(get_data("time_resolution/lab.h5"), "Lab")
     p.plot_from_path(get_data("time_resolution/mc.h5"), "Simulation")
-    # p.plot_from_path(get_data("time_resolution/mc125.h5"), "MC, 125MHz")
+    p.plot_from_path(get_data("time_resolution/mc125.h5"), "Simulation, 125MHz")
     p.save(output_path)
 
     output_path = get_plot("time_resolution/checm.pdf")
