@@ -34,23 +34,23 @@ def main():
         mapping = reader.read_mapping()
         width = df_cam['width'].values
         length = df_cam['length'].values
-        p_width_length.plot(width, length, ms=0.5, label='Real', alpha=0.7, zorder=2)
+        p_width_length.plot(width, length, ms=0.5, label='Real', zorder=2)
 
     input_path = "/Volumes/gct-jason/thesis_data/checm/cherenkov/meudon_cr/proton_dl1b.h5"
     with ThesisHDF5Reader(input_path) as reader:
         df_sim = reader.read("data")
         width = df_sim['width'].values
         length = df_sim['length'].values
-        p_width_length.plot(width, length, ms=0.5, label='Simulation', alpha=0.7, zorder=1)
+        p_width_length.plot(width, length, ms=0.5, label='Simulation', zorder=1)
 
     input_path = "/Volumes/gct-jason/thesis_data/checm/cherenkov/meudon_cr/proton_heidefix_dl1b.h5"
     with ThesisHDF5Reader(input_path) as reader:
         df_simcorr = reader.read("data")
         width = df_simcorr['width'].values
         length = df_simcorr['length'].values
-        p_width_length.plot(width, length, ms=0.5, label='Simulation (Focus-matched)', alpha=0.7, zorder=1)
+        p_width_length.plot(width, length, ms=0.5, label='Simulation (Out-of-Focus)', zorder=1)
 
-    def add(iev, label, image_path, time_path, color=None):
+    def add(iev, label, image_path, time_path, color=None, add=True):
         df_im = df_cam.loc[df_cam['iev'] == iev]
         image = df_im['image'].values[0]
         peakpos = df_im['peakpos'].values[0]
@@ -60,7 +60,7 @@ def main():
         p_ci = CameraImage.from_mapping(mapping)
         p_ci.image = image
         p_ci.add_colorbar("Charge (p.e.)")
-        p_ci.highlight_pixels(tailcuts_w, 'white', 0.5, 1)
+        p_ci.highlight_pixels(tailcuts_w, 'white', 0.2, 1)
         p_ci.save(image_path)
         p_ci = CameraImage.from_mapping(mapping)
         p_ci.image = peakpos
@@ -69,20 +69,29 @@ def main():
         p_ci.save(time_path)
         width = df_im['width'].values[0]
         length = df_im['length'].values[0]
-        p_width_length.plot_interesting(width, length, fmt='x', mew=0.7, ms=5,
-                                        label=label, color=color)
+        if add:
+            p_width_length.plot_interesting(width, length, fmt='x', mew=0.7,
+                                            ms=5, label=label, color=color)
 
     add(
-        46,
-        r"Direct CR Entry\&Exit",
-        get_plot("hillas/checm/cr_ee.pdf"),
-        get_plot("hillas/checm/cr_ee_time.pdf")
+        136,
+        "Typical Shower",
+        get_plot("hillas/checm/typical.pdf"),
+        get_plot("hillas/checm/typical_time.pdf"),
+        color='black'
     )
     add(
         117,
         "Bright Shower",
         get_plot("hillas/checm/bright.pdf"),
-        get_plot("hillas/checm/bright_time.pdf")
+        get_plot("hillas/checm/bright_time.pdf"),
+        add=False
+    )
+    add(
+        9,
+        "Bright Shower",
+        get_plot("hillas/checm/bright2.pdf"),
+        get_plot("hillas/checm/bright2_time.pdf")
     )
     add(
         124,
@@ -91,10 +100,10 @@ def main():
         get_plot("hillas/checm/cr_time.pdf")
     )
     add(
-        136,
-        "Typical Shower",
-        get_plot("hillas/checm/typical.pdf"),
-        get_plot("hillas/checm/typical_time.pdf")
+        46,
+        r"Direct CR Entry\&Exit",
+        get_plot("hillas/checm/cr_ee.pdf"),
+        get_plot("hillas/checm/cr_ee_time.pdf")
     )
 
     p_width_length.save(get_plot("hillas/checm/width_length.pdf"))

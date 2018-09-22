@@ -79,6 +79,7 @@ def process_reduction():
     reduction.charge_extraction_window.main()
     reduction.annotated_waveform.main()
     reduction.pulse_shape.main()
+    reduction.enf_spectrum_comparison.main()
 
 
 def process_analysis():
@@ -98,15 +99,16 @@ def process_analysis():
     analysis.cross_correlation.main()
     analysis.tf_pulse_fit.main()
     analysis.pulse_shape.main()
+    analysis.enf_spectrum_comparison.main()
 
 
 def main():
-    # process_illumination_profiles()
-    # process_fw_correction()
-    # process_fw_correction_check()
-    # process_external()
+    process_illumination_profiles()
+    process_fw_correction()
+    process_fw_correction_check()
+    process_external()
     process_external_plots()
-    # process_reduction()
+    process_reduction()
     process_analysis()
 
 

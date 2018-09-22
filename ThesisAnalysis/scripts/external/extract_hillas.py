@@ -12,6 +12,7 @@ from matplotlib import pyplot as plt
 from pandas.errors import PerformanceWarning
 import warnings
 from tqdm import tqdm
+from glob import glob
 
 from IPython import embed
 
@@ -22,6 +23,10 @@ def process(input_paths, tailcuts, plate_scale, output_path, plot=False):
     desc0 = "Looping over files"
     desc1 = "Looping over events"
     n_files = len(input_paths)
+
+    itotal = 0
+    imax = 20000
+
     for ifile, input_path in tqdm(enumerate(input_paths), total=n_files, desc=desc0):
         reader = DL1Reader(input_path)
         mapping = reader.mapping
@@ -86,6 +91,9 @@ def process(input_paths, tailcuts, plate_scale, output_path, plot=False):
                 skewness=hillas.skewness,
                 kurtosis=hillas.kurtosis
             ))
+            itotal += 1
+        if itotal >= imax:
+            break
 
     df = pd.DataFrame(d_list)
 
@@ -124,6 +132,22 @@ def main():
     tailcuts = (17, 8)
     plate_scale = 40.344e-3
     output_path = "/Volumes/gct-jason/thesis_data/checm/cherenkov/meudon_cr/proton_heidefix_dl1b.h5"
+    process(input_paths, tailcuts, plate_scale, output_path)
+
+    input_paths = glob(
+        "/Volumes/gct-jason/thesis_data/checs/mc/onsky/gamma/v2/Run*_dl1.h5"
+    )
+    tailcuts = (10, 2)
+    plate_scale = 39.6e-3
+    output_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/proton/v2/checs_gamma_dl1b.h5"
+    process(input_paths, tailcuts, plate_scale, output_path)
+
+    input_paths = glob(
+        "/Volumes/gct-jason/thesis_data/checs/mc/onsky/proton/v2/Run*_dl1.h5"
+    )
+    tailcuts = (10, 2)
+    plate_scale = 39.6e-3
+    output_path = "/Volumes/gct-jason/thesis_data/checs/mc/onsky/proton/v2/checs_proton_dl1b.h5"
     process(input_paths, tailcuts, plate_scale, output_path)
 
 

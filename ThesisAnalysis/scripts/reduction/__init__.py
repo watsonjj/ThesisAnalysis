@@ -13,3 +13,4 @@ from . import tf_lookup
 from . import charge_extraction_window
 from . import annotated_waveform
 from . import pulse_shape
+from . import enf_spectrum_comparison

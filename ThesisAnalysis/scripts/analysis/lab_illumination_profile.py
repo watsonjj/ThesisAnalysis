@@ -88,30 +88,36 @@ def process(camera):
     ypix = mapping['ypix'].values
 
     pixel = df['Pixel'].values
-    laser_correction = df['LaserCorrection'].values
-    geom_correction = df['FlatCorrection'].values
-    total_correction = df['TotalCorrection'].values
+    laser_correction = 1/df['LaserCorrection'].values
+    geom_correction = 1/df['FlatCorrection'].values
+    total_correction = 1/df['TotalCorrection'].values
 
-    laser_correction = ip.fold_laser_profile(vy, laser_correction, ypix)
+    # laser_correction = ip.fold_laser_profile(vy, laser_correction, ypix)
+
+    xpix = mapping['xpix'].values
+    ypix = mapping['ypix'].values
+    r = np.sqrt(xpix**2 + ypix**2)
+    geom_correction = ip.get_illumination_correction(r)
+    total_correction = geom_correction * laser_correction
     # embed()
 
     plot_dir = get_plot("{}_illumination_profile".format(camera))
 
     p_image_laser = CameraImage.from_mapping(mapping)
     p_image_laser.image = laser_correction
-    p_image_laser.add_colorbar()
+    p_image_laser.add_colorbar("Laser Correction")
     path = os.path.join(plot_dir, "laser_correction.pdf")
     p_image_laser.save(path)
 
     p_image_geom = CameraImage.from_mapping(mapping)
     p_image_geom.image = geom_correction
-    p_image_geom.add_colorbar()
+    p_image_geom.add_colorbar("Geometry Correction")
     path = os.path.join(plot_dir, "geom_correction.pdf")
     p_image_geom.save(path)
 
     p_image_total = CameraImage.from_mapping(mapping)
     p_image_total.image = total_correction
-    p_image_total.add_colorbar()
+    p_image_total.add_colorbar("Total Correction")
     path = os.path.join(plot_dir, "total_correction.pdf")
     p_image_total.save(path)
 

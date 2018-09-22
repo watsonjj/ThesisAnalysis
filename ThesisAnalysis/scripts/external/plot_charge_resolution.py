@@ -213,14 +213,15 @@ def main():
     # ph.p_crwrr.ax.set_ylim(top=1.5)
     # ph.save(output_dir)
 
-    # output_dir = get_plot("charge_resolution/8_ce_comparison/lab")
-    # path_dict = {
-    #     "Cross-Correlation": Lab_TFPoly(),
-    #     "Window Integration": Lab_Window(),
-    # }
-    # ph = PlotHandler()
-    # ph.plot_average_from_dict(path_dict, poi)
-    # ph.save(output_dir)
+    output_dir = get_plot("charge_resolution/8_ce_comparison/lab")
+    path_dict = {
+        "Cross-Correlation": Lab_TFPoly(),
+        "Window Integration": Lab_Window(),
+    }
+    ph = PlotHandler()
+    ph.plot_average_from_dict(path_dict, poi)
+    ph.p_crwrr.ax.set_ylim(top=1.8)
+    ph.save(output_dir)
     #
     # output_dir = get_plot("charge_resolution/8_ce_comparison/opct40")
     # path_dict = {
@@ -243,12 +244,12 @@ def main():
     # ph = PlotHandler()
     # ph.plot_average_from_dict(path_dict, poi)
     # ph.save(output_dir)
-
-    output_dir = get_plot("charge_resolution/8_ce_comparison/high_noise")
-    ph = PlotHandler()
-    ph.plot_average(MCLab_Opct20_CC_5MHz_HEN(), "Cross-Correlation", poi, 20)
-    ph.plot_average(MCLab_Opct20_Window_5MHz_HEN(), "Window Integration", poi, 20)
-    ph.save(output_dir)
+    #
+    # output_dir = get_plot("charge_resolution/8_ce_comparison/high_noise")
+    # ph = PlotHandler()
+    # ph.plot_average(MCLab_Opct20_CC_5MHz_HEN(), "Cross-Correlation", poi, 20)
+    # ph.plot_average(MCLab_Opct20_Window_5MHz_HEN(), "Window Integration", poi, 20)
+    # ph.save(output_dir)
 
 
 if __name__ == '__main__':

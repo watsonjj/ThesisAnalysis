@@ -13,7 +13,7 @@ class TimeResPlotter(ThesisPlotter):
     def plot(self, x, y, xerr, yerr, label=""):
 
         (_, caps, _) = self.ax.errorbar(
-            x, yerr, xerr=xerr, yerr=None, mew=1, capsize=1, elinewidth=0.5,
+            x, y, xerr=xerr, yerr=yerr, mew=1, capsize=1, elinewidth=0.5,
             markersize=2, label=label, linewidth=0.5, fmt='.',
         )
         for cap in caps:
@@ -26,20 +26,33 @@ class TimeResPlotter(ThesisPlotter):
         # self.ax.get_yaxis().set_major_formatter(
         #     FuncFormatter(lambda y, _: '{:g}'.format(y)))
 
-        self.ax.set_xlabel("Average Expected Charge (p.e.)")
-        self.ax.set_ylabel("Time Resolution (ns)")
-        self.add_legend("best")
-
     def plot_from_path(self, input_path, label=""):
         with ThesisHDF5Reader(input_path) as reader:
             df = reader.read("data")
 
-        x = df['expected'].values
-        y = df['mean'].values
-        xerr = df['expected_err'].values
-        yerr = df['std'].values
+            embed()
+
+        df_gb = df.groupby("expected")
+        df_mean = df_gb.mean()
+        df_std = df_gb.std()
+
+        x = df_mean.index.values
+        y = df_mean['std'].values
+        xerr = df_mean['expected_err'].values
+        yerr = df_std['std'].values
 
         self.plot(x, y, xerr, yerr, label)
+
+    def finish(self):
+        # xmin, xmax = self.ax.get_xlim()
+        # x = [5, xmax]
+        # y = [2, 2]
+        # self.ax.plot(x, y, '--', color='black', label="Requirement")
+        # self.ax.set_xlim(xmin, xmax)
+        self.ax.axhline(2, ls='--', color='black', label="Requirement")
+        self.ax.set_xlabel("Average Expected Charge (p.e.)")
+        self.ax.set_ylabel("Time Resolution (ns)")
+        self.add_legend("best")
 
 
 def process():

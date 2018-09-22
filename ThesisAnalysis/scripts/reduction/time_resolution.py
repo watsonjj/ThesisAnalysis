@@ -54,10 +54,14 @@ def process(file, time_corr_path, output_path):
     n_runs = df_runs.index.size
     dead = file.dead
     fw_path = file.fw_path
+    ff_path = file.ff_path
 
     with ThesisHDF5Reader(fw_path) as reader:
         fw_m = reader.read_metadata()['fw_m_camera']
         fw_merr = reader.read_metadata()['fw_merr_camera']
+
+    with ThesisHDF5Reader(ff_path) as reader:
+        ff_m = reader.read('data')['ff_m'].values
 
     with ThesisHDF5Reader(time_corr_path) as reader:
         t_corr = reader.read("data")['t_corr'].values
@@ -72,26 +76,21 @@ def process(file, time_corr_path, output_path):
     desc0 = "Looping over files"
     it = enumerate(df_runs.iterrows())
     for i, (_, row) in tqdm(it, total=n_runs, desc=desc0):
-        stats = Statistics()
         reader = row['reader']
         transmission = row['transmission']
 
-        pixel, iev, t_pulse = reader.select_columns(['pixel', 'iev', 't_pulse'], stop=100*n_pixels)
+        pixel, iev, t_pulse, charge = reader.select_columns(['pixel', 'iev', 't_pulse', 'charge'], stop=100*n_pixels)
         df = pd.DataFrame(dict(
             pixel=pixel,
             iev=iev,
             t_pulse=t_pulse,
+            charge=charge,
         ))
         df = df.loc[~df['pixel'].isin(dead)]
         df['t_pulse'] -= t_corr[df['pixel'].values]
+        df['charge'] /= ff_m[df['pixel'].values]
+        df.loc[df['charge'].values < 5, 't_pulse'] = np.nan
         n_events = df.index.size // n_pixelsd
-
-        # t_pulse = df['t_pulse'].values
-        # t_pulse = t_pulse.reshape((n_events, n_pixelsd))
-        # t_diff = t_pulse[:, :, None] - t_pulse[:, None, :]
-        # t_diff = np.ma.masked_array(t_diff, mask=np.tile(mask, (n_events, 1, 1))).compressed()
-        # mean = np.nanmean(t_diff)
-        # std = np.nanstd(t_diff, ddof=1)
 
         for iev in trange(n_events):
             df_i = df.iloc[iev*n_pixelsd:(iev+1)*n_pixelsd]
@@ -99,15 +98,17 @@ def process(file, time_corr_path, output_path):
             t_diff = t_pulse[:, None] - t_pulse[None, :]
             t_diff = np.ma.masked_array(t_diff, mask=mask)
             t_diff_c = t_diff.compressed()
-            t_diff_c = t_diff_c[~np.isnan(t_diff_c)]
-            stats.add(t_diff_c)
-        mean, std = stats.finish()
-        d_list.append(dict(
-            expected=transmission*fw_m,
-            expected_err=transmission*fw_merr,
-            mean=mean,
-            std=std,
-        ))
+            mean = np.nanstd(t_diff_c, ddof=1)
+            std = np.nanstd(t_diff_c, ddof=1)
+            sum_ = np.count_nonzero(~np.isnan(t_diff_c))
+            d_list.append(dict(
+                expected=transmission*fw_m,
+                expected_err=transmission*fw_merr,
+                iev=iev,
+                mean=mean,
+                std=std,
+                sum=sum_,
+            ))
         reader.store.close()
 
     df = pd.DataFrame(d_list)
@@ -117,10 +118,10 @@ def process(file, time_corr_path, output_path):
 
 
 def main():
-    # file = Lab_TFPoly()
-    # time_corr_path = get_data("time_corrections/time_corrections_lab.h5")
-    # output_path = get_data("time_resolution/lab.h5")
-    # process(file, time_corr_path, output_path)
+    file = Lab_TFPoly()
+    time_corr_path = get_data("time_corrections/time_corrections_lab.h5")
+    output_path = get_data("time_resolution/lab.h5")
+    process(file, time_corr_path, output_path)
 
     file = MCLab_Opct40_Window_5MHz()
     time_corr_path = get_data("time_corrections/time_corrections_mc.h5")
@@ -132,10 +133,10 @@ def main():
     output_path = get_data("time_resolution/mc125.h5")
     process(file, time_corr_path, output_path)
 
-    # file = CHECM()
-    # time_corr_path = get_data("time_corrections/time_corrections_checm.h5")
-    # output_path = get_data("time_resolution/checm.h5")
-    # process(file, time_corr_path, output_path)
+    file = CHECM()
+    time_corr_path = get_data("time_corrections/time_corrections_checm.h5")
+    output_path = get_data("time_resolution/checm.h5")
+    process(file, time_corr_path, output_path)
 
 
 if __name__ == '__main__':
