@@ -34,21 +34,21 @@ def main():
         mapping = reader.read_mapping()
         width = df_cam['width'].values
         length = df_cam['length'].values
-        p_width_length.plot(width, length, ms=0.5, label='Real', zorder=2)
+        p_width_length.plot(width, length, fmt='o', ms=0.7, label='Real', zorder=2)
 
     input_path = "/Volumes/gct-jason/thesis_data/checm/cherenkov/meudon_cr/proton_dl1b.h5"
     with ThesisHDF5Reader(input_path) as reader:
         df_sim = reader.read("data")
         width = df_sim['width'].values
         length = df_sim['length'].values
-        p_width_length.plot(width, length, ms=0.5, label='Simulation', zorder=1)
+        p_width_length.plot(width, length, fmt='*', ms=0.7, label='Simulation', zorder=1)
 
     input_path = "/Volumes/gct-jason/thesis_data/checm/cherenkov/meudon_cr/proton_heidefix_dl1b.h5"
     with ThesisHDF5Reader(input_path) as reader:
         df_simcorr = reader.read("data")
         width = df_simcorr['width'].values
         length = df_simcorr['length'].values
-        p_width_length.plot(width, length, ms=0.5, label='Simulation (Out-of-Focus)', zorder=1)
+        p_width_length.plot(width, length, fmt='v', ms=0.5, label='Simulation (Out-of-Focus)', zorder=1)
 
     def add(iev, label, image_path, time_path, color=None, add=True):
         df_im = df_cam.loc[df_cam['iev'] == iev]
@@ -61,12 +61,12 @@ def main():
         p_ci.image = image
         p_ci.add_colorbar("Charge (p.e.)")
         p_ci.highlight_pixels(tailcuts_w, 'white', 0.2, 1)
-        p_ci.save(image_path)
+        # p_ci.save(image_path)
         p_ci = CameraImage.from_mapping(mapping)
         p_ci.image = peakpos
         p_ci.add_colorbar("Signal Time (ns)")
         p_ci.highlight_pixels(np.arange(2048), 'black', 0.2, 1)
-        p_ci.save(time_path)
+        # p_ci.save(time_path)
         width = df_im['width'].values[0]
         length = df_im['length'].values[0]
         if add:
