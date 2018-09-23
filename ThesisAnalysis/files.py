@@ -423,6 +423,30 @@ class Lab_TFWithPed(Lab):
         return False
 
 
+class Lab_TFPoly_Sampling(Lab):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.fw_path = "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_poly_sampling/fw_calibration.h5"
+        self.ff_path = "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_poly_sampling/ff_coefficients.h5"
+        self.runlist_path = "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_poly_sampling/runlist.txt"
+        self.spe_path = "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_poly_sampling/spe.h5"
+
+    def is_abstract(self):
+        return False
+
+
+class Lab_TFWithPed_Sampling(Lab):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.fw_path = "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_withped_sampling/fw_calibration.h5"
+        self.ff_path = "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_withped_sampling/ff_coefficients.h5"
+        self.runlist_path = "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_withped_sampling/runlist.txt"
+        self.spe_path = "/Volumes/gct-jason/thesis_data/checs/lab/dynrange/tf/tf_withped_sampling/spe.h5"
+
+    def is_abstract(self):
+        return False
+
+
 class Lab_GM50ADC(Lab):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -536,28 +560,30 @@ class CHECM(File):
 
 
 all_files = [
-    MCLab_Opct40_0MHz(),
-    MCLab_Opct40_5MHz(),
-    MCLab_Opct40_40MHz(),
-    MCLab_Opct40_125MHz(),
-    MCLab_Opct40_1200MHz(),
-    MCLab_Opct20_5MHz(),
-    MCLab_Opct20_125MHz(),
-    MCLab_Opct40_Window_5MHz(),
-    MCLab_Opct40_Window_125MHz(),
-    MCLab_Opct20_Window_5MHz(),
-    MCLab_Opct20_Window_125MHz(),
-    MCLab_Opct20_Window_5MHz_HEN(),
-    MCLab_Opct20_CC_5MHz_HEN(),
-    Lab_TFNone(),
-    Lab_TFPchip(),
-    Lab_TFPoly(),
-    Lab_TFWithPed(),
-    Lab_GM50ADC(),
-    Lab_GM100ADC(),
-    Lab_GM200ADC(),
-    Lab_Window(),
-    CHECM(),
+    # MCLab_Opct40_0MHz(),
+    # MCLab_Opct40_5MHz(),
+    # MCLab_Opct40_40MHz(),
+    # MCLab_Opct40_125MHz(),
+    # MCLab_Opct40_1200MHz(),
+    # MCLab_Opct20_5MHz(),
+    # MCLab_Opct20_125MHz(),
+    # MCLab_Opct40_Window_5MHz(),
+    # MCLab_Opct40_Window_125MHz(),
+    # MCLab_Opct20_Window_5MHz(),
+    # MCLab_Opct20_Window_125MHz(),
+    # MCLab_Opct20_Window_5MHz_HEN(),
+    # MCLab_Opct20_CC_5MHz_HEN(),
+    # Lab_TFNone(),
+    # Lab_TFPchip(),
+    # Lab_TFPoly(),
+    # Lab_TFWithPed(),
+    # Lab_TFPoly_Sampling(),
+    Lab_TFWithPed_Sampling(),
+    # Lab_GM50ADC(),
+    # Lab_GM100ADC(),
+    # Lab_GM200ADC(),
+    # Lab_Window(),
+    # CHECM(),
 ]
 
 fw_correction_original_files = [
@@ -572,19 +598,21 @@ fw_correction_post_files = [
 ]
 
 calib_files = [
-    MCLab_Opct40_5MHz(),
-    MCLab_Opct20_5MHz(),
-    MCLab_Opct40_Window_5MHz(),
-    MCLab_Opct20_Window_5MHz(),
-    Lab_TFNone(),
-    Lab_TFPchip(),
-    Lab_TFPoly(),
-    Lab_TFWithPed(),
-    Lab_GM50ADC(),
-    Lab_GM100ADC(),
-    Lab_GM200ADC(),
-    Lab_Window(),
-    CHECM(),
+    # MCLab_Opct40_5MHz(),
+    # MCLab_Opct20_5MHz(),
+    # MCLab_Opct40_Window_5MHz(),
+    # MCLab_Opct20_Window_5MHz(),
+    # Lab_TFNone(),
+    # Lab_TFPchip(),
+    # Lab_TFPoly(),
+    # Lab_TFWithPed(),
+    # Lab_TFPoly_Sampling(),
+    Lab_TFWithPed_Sampling(),
+    # Lab_GM50ADC(),
+    # Lab_GM100ADC(),
+    # Lab_GM200ADC(),
+    # Lab_Window(),
+    # CHECM(),
 ]
 
 spe_files = [
@@ -594,6 +622,8 @@ spe_files = [
     Lab_TFPchip(),
     Lab_TFPoly(),
     Lab_TFWithPed(),
+    Lab_TFPoly_Sampling(),
+    Lab_TFWithPed_Sampling(),
     Lab_GM50ADC(),
     Lab_GM100ADC(),
     Lab_GM200ADC(),

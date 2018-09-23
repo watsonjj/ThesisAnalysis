@@ -159,17 +159,30 @@ def main():
     # ph.p_crwrr.ax.plot(x, y/yreq, label='CHEC-M Fit')
     # ph.save(output_dir)
     #
-    # output_dir = get_plot("charge_resolution/6_tf_comparison")
-    # path_dict = {
-    #     "Lab (No TF)": Lab_TFNone(),
-    #     "Lab (TF-PCHIP)": Lab_TFPchip(),
-    #     "Lab (TF-Poly)": Lab_TFPoly(),
-    #     "Lab (TF-WithPedestal)": Lab_TFWithPed(),
-    # }
-    # ph = PlotHandler()
-    # ph.plot_average_from_dict(path_dict, poi)
-    # ph.p_crwrr.ax.set_ylim(top=3)
-    # ph.save(output_dir)
+    output_dir = get_plot("charge_resolution/6_tf_comparison/gen.pdf")
+    path_dict = {
+        "None": Lab_TFNone(),
+        "PCHIP": Lab_TFPchip(),
+        "Poly": Lab_TFPoly(),
+        "Direct": Lab_TFWithPed(),
+    }
+    ph = PlotHandler()
+    ph.plot_average_from_dict(path_dict, poi)
+    ph.p_crwrr.ax.set_ylim(top=3)
+    ph.save(output_dir)
+
+    output_dir = get_plot("charge_resolution/6_tf_comparison/cells.pdf")
+    path_dict = {
+        "Per Storage Cell": Lab_TFPoly(),
+        "Per Sampling Cell": Lab_TFPoly_Sampling(),
+        # "Per Storage Cell (wp)": Lab_TFWithPed(),
+        # "Per Sampling Cell (wp)": Lab_TFWithPed_Sampling(),
+    }
+    ph = PlotHandler()
+    ph.plot_average_from_dict(path_dict, poi)
+    ph.p_crwrr.ax.set_ylim(top=3)
+    ph.save(output_dir)
+
     #
     # output_dir = get_plot("charge_resolution/7_fit/lab")
     # path_dict = {
@@ -213,15 +226,15 @@ def main():
     # ph.p_crwrr.ax.set_ylim(top=1.5)
     # ph.save(output_dir)
 
-    output_dir = get_plot("charge_resolution/8_ce_comparison/lab")
-    path_dict = {
-        "Cross-Correlation": Lab_TFPoly(),
-        "Window Integration": Lab_Window(),
-    }
-    ph = PlotHandler()
-    ph.plot_average_from_dict(path_dict, poi)
-    ph.p_crwrr.ax.set_ylim(top=1.8)
-    ph.save(output_dir)
+    # output_dir = get_plot("charge_resolution/8_ce_comparison/lab")
+    # path_dict = {
+    #     "Cross-Correlation": Lab_TFPoly(),
+    #     "Window Integration": Lab_Window(),
+    # }
+    # ph = PlotHandler()
+    # ph.plot_average_from_dict(path_dict, poi)
+    # ph.p_crwrr.ax.set_ylim(top=1.8)
+    # ph.save(output_dir)
     #
     # output_dir = get_plot("charge_resolution/8_ce_comparison/opct40")
     # path_dict = {

@@ -22,12 +22,21 @@ def copyex(src, chapter, file=None):
 # copy("checs_illumination_profile/geom_correction_cropped.pdf", "a2")
 # copy("checs_illumination_profile/laser_correction_cropped.pdf", "a2")
 # copy("checs_illumination_profile/total_correction_cropped.pdf", "a2")
+
+copy("tf/lookup_comparison.pdf", "a4", "tf_lookup_comparison.pdf")
+copy("tf/lookup_comparison_zoom.pdf", "a4", "tf_lookup_comparison_zoom.pdf")
+copy("charge_resolution/6_tf_comparison/charge_res_wrr.pdf", "ch7", "cr_6_tf_comparison.pdf")
+
 #
 # copy("charge_extraction_window/amp1nsb5.pdf", "a5")
 # copy("charge_extraction_window/amp1nsb125.pdf", "a5")
 # copy("charge_extraction_window/amp50nsb5.pdf", "a5")
 # copy("charge_extraction_window/amp50nsb125.pdf", "a5")
 # copy("charge_extraction_window/charge_extraction_window_wf.pdf", "a5")
+# copy("charge_resolution/8_ce_comparison/lab/charge_res_wrr.pdf", "a5", "cr_8_ce_comparison_lab.pdf")
+# copy("charge_resolution/8_ce_comparison/opct40/charge_res_wrr.pdf", "a5", "cr_8_ce_comparison_opct40.pdf")
+# copy("charge_resolution/8_ce_comparison/opct20/charge_res_wrr.pdf", "a5", "cr_8_ce_comparison_opct20.pdf")
+# copy("charge_resolution/8_ce_comparison/high_noise/charge_res_wrr.pdf", "a5", "cr_8_ce_comparison_high_noise.pdf")
 #
 # copy("enf_spectrum_comparison/checm_checs.pdf", "ch2", "enf_gain.pdf")
 #
@@ -71,12 +80,7 @@ def copyex(src, chapter, file=None):
 # copy("charge_resolution/4_opct/mc/charge_res_wrr.pdf", "ch7", "cr_4_opct_mc.pdf")
 # copy("charge_resolution/4_opct/biasvoltage/charge_res_wrr.pdf", "ch7", "cr_4_opct_biasvoltage.pdf")
 # copy("charge_resolution/5_camera_comparison/charge_res_wrr.pdf", "ch7", "cr_5_camera_comparison.pdf")
-# copy("charge_resolution/6_tf_comparison/charge_res_wrr.pdf", "ch7", "cr_6_tf_comparison.pdf")
 # copy("charge_resolution/7_fit/lab/charge_res_wrr.pdf", "ch7", "cr_7_fit.pdf")
-# copy("charge_resolution/8_ce_comparison/lab/charge_res_wrr.pdf", "a3", "cr_8_ce_comparison_lab.pdf")
-# copy("charge_resolution/8_ce_comparison/opct40/charge_res_wrr.pdf", "a3", "cr_8_ce_comparison_opct40.pdf")
-# copy("charge_resolution/8_ce_comparison/opct20/charge_res_wrr.pdf", "a3", "cr_8_ce_comparison_opct20.pdf")
-# copy("charge_resolution/8_ce_comparison/high_noise/charge_res_wrr.pdf", "a3", "cr_8_ce_comparison_high_noise.pdf")
 # copy("pulse_shape/pulse_shape_lab.pdf", "ch7")
 # copy("pulse_shape/pulse_shape_mc.pdf", "ch7")
 # copy("pulse_shape/pulse_shape_checm.pdf", "ch7")
@@ -88,10 +92,10 @@ def copyex(src, chapter, file=None):
 # copy("hillas/checm/cr_ee.pdf", "ch8", "hillas_checm_cr_ee.pdf")
 # copy("hillas/checm/typical.pdf", "ch8", "hillas_checm_typical.pdf")
 # copy("hillas/checm/width_length.pdf", "ch8", "hillas_checm_width_length.pdf")
-copy("jupiter/1d_projection_x.pdf", "ch8", "jupiter_1d_projection_x.pdf")
-copy("jupiter/1d_projection_y.pdf", "ch8", "jupiter_1d_projection_y.pdf")
-copy("jupiter/image_mirror1_deg0_cropped.pdf", "ch8", "jupiter_image.pdf")
-copy("jupiter/contour.pdf", "ch8", "jupiter_contour.pdf")
+# copy("jupiter/1d_projection_x.pdf", "ch8", "jupiter_1d_projection_x.pdf")
+# copy("jupiter/1d_projection_y.pdf", "ch8", "jupiter_1d_projection_y.pdf")
+# copy("jupiter/image_mirror1_deg0_cropped.pdf", "ch8", "jupiter_image.pdf")
+# copy("jupiter/contour.pdf", "ch8", "jupiter_contour.pdf")
 #
 #
 #
