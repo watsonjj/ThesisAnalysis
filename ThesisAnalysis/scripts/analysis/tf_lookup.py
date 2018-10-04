@@ -27,11 +27,6 @@ class TFComparison(ThesisPlotter):
         color = next(self.ax._get_lines.prop_cycler)['color']
         self.ax.plot(x, y[0], color=color, lw=1, label=label)
 
-    def finish(self):
-        self.ax.set_xlabel("Sample (ADC)")
-        self.ax.set_ylabel("Calibrated Sample (mV)")
-        self.add_legend(2)
-
 
 def process(input_path, output_path):
     with ThesisHDF5Reader(input_path) as reader:
@@ -67,27 +62,30 @@ def process_comparison(input_path1, input_path2, output_path):
 
     base = os.path.splitext(output_path)[0]
 
-    p_tf = TFComparison(sidebyside=True)
+    p_tf = TFComparison()
     p_tf.plot(x1, y1, "Direct")
     p_tf.plot(x2, y2, "Poly")
+    p_tf.ax.set_xlabel("Sample (ADC)")
+    p_tf.ax.set_ylabel("Calibrated Sample (mV)")
+    p_tf.add_legend(2)
     p_tf.save(base + ".pdf")
 
     p_tf = TFComparison(sidebyside=True)
     p_tf.plot(x1, y1, "Direct")
     p_tf.plot(x2, y2, "Poly")
-    p_tf.ax.set_xlim(-100, 100)
-    p_tf.ax.set_ylim(-100, 100)
+    p_tf.ax.set_xlim(-50, 50)
+    p_tf.ax.set_ylim(-50, 50)
     p_tf.save(base + "_zoom.pdf")
 
 
 def main():
-    # input_path = get_data("tf/t5_lookup.h5")
-    # output_path = get_plot("tf/lookup_t5.pdf")
-    # process(input_path, output_path)
-    #
-    # input_path = get_data("tf/tc_lookup.h5")
-    # output_path = get_plot("tf/lookup_tc.pdf")
-    # process(input_path, output_path)
+    input_path = get_data("tf/t5_lookup.h5")
+    output_path = get_plot("tf/lookup_t5.pdf")
+    process(input_path, output_path)
+
+    input_path = get_data("tf/tc_lookup.h5")
+    output_path = get_plot("tf/lookup_tc.pdf")
+    process(input_path, output_path)
 
     input_path1 = get_data("tf/tc_direct_lookup.h5")
     input_path2 = get_data("tf/tc_lookup.h5")
