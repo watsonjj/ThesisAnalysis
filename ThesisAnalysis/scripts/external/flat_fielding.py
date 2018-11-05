@@ -14,7 +14,7 @@ class FitPlotter(ThesisPlotter):
     def plot(self, x, y, xerr, yerr, flag, c, m, merr):
 
         x_fit = np.geomspace(0.1, 1000, 20)
-        y_fit = (m + merr) * x_fit
+        y_fit = (m + merr) * x_fit  # TODO: mistake?
         yerr_fit = merr * x_fit
 
         (_, caps, _) = self.ax.errorbar(x[~flag], y[~flag],
