@@ -26,7 +26,7 @@ class ThesisHDF5Writer:
             os.makedirs(output_dir)
             print("Created directory: {}".format(output_dir))
 
-        self.store = self.store = pd.HDFStore(
+        self.store = pd.HDFStore(
             path, mode='w', complevel=9, complib='blosc:blosclz'
         )
         print("HDF5 Created: {}".format(self.path))
@@ -55,7 +55,7 @@ class ThesisHDF5Reader:
     def __init__(self, path):
         self.path = path
 
-        self.store = self.store = pd.HDFStore(
+        self.store = pd.HDFStore(
             path, mode='r', complevel=9, complib='blosc:blosclz'
         )
 
