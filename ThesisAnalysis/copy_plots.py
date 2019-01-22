@@ -38,6 +38,7 @@ copy("charge_resolution/8_ce_comparison/lab/charge_res_wrr.pdf", "a5", "cr_8_ce_
 copy("charge_resolution/8_ce_comparison/opct40/charge_res_wrr.pdf", "a5", "cr_8_ce_comparison_opct40.pdf")
 copy("charge_resolution/8_ce_comparison/opct20/charge_res_wrr.pdf", "a5", "cr_8_ce_comparison_opct20.pdf")
 copy("charge_resolution/8_ce_comparison/high_noise/charge_res_wrr.pdf", "a5", "cr_8_ce_comparison_high_noise.pdf")
+copy("cc_pulse_shape/pulse_shape_lab_charge.pdf", "a5", "cc_pulse_shape.pdf")
 
 copy("enf_spectrum_comparison/checm_checs.pdf", "ch2", "enf_gain.pdf")
 
