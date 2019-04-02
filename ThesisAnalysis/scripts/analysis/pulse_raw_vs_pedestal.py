@@ -6,7 +6,7 @@ from matplotlib.ticker import MultipleLocator
 from target_calib import CalculateRowColumnBlockPhase, GetCellIDTCArray
 
 
-class Waveform(ThesisPlotter):
+class WaveformDual(ThesisPlotter):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.axr1 = self.ax
@@ -17,8 +17,8 @@ class Waveform(ThesisPlotter):
         """adjust ax2 ylimit so that v2 in ax2 is aligned to v1 in ax1"""
         _, y1 = ax1.transData.transform((0, v1))
         _, y2 = ax2.transData.transform((0, v2))
-        Waveform.adjust_yaxis(ax2, (y1 - y2) / 2, v2)
-        Waveform.adjust_yaxis(ax1, (y2 - y1) / 2, v1)
+        WaveformDual.adjust_yaxis(ax2, (y1 - y2) / 2, v2)
+        WaveformDual.adjust_yaxis(ax1, (y2 - y1) / 2, v1)
 
     @staticmethod
     def adjust_yaxis(ax, ydif, v):
@@ -59,15 +59,36 @@ class Waveform(ThesisPlotter):
         self.align_yaxis(self.axr1, yr1.mean(), self.axr0, yr0.mean())
 
 
+class Waveform(ThesisPlotter):
+    def plot(self, x, y):
+        self.ax.plot(x, y, color='black')
+
+        self.ax.set_xlabel("Time (ns)")
+        self.ax.set_ylabel("ADC")
+
+        self.ax.xaxis.set_major_locator(MultipleLocator(16))
+
+
 def main():
     path = get_data("pedestal/pedestal_pulse_checs.h5")
     with ThesisHDF5Reader(path) as reader:
         df = reader.read("data")
 
     eoi = 10
+    p_wfd = WaveformDual(sidebyside=True)
+    p_wfd.plot(df, eoi)
+    p_wfd.save(get_plot("pulse_raw_vs_pedestal.pdf"))
+
+    df_event = df.loc[df['iev'] == eoi]
+    x = df_event['isam']
+    yr1 = df_event['r1']
+    yr0 = df_event['r0']
     p_wf = Waveform(sidebyside=True)
-    p_wf.plot(df, eoi)
-    p_wf.save(get_plot("pulse_raw_vs_pedestal.pdf"))
+    p_wf.plot(x, yr0)
+    p_wf.save(get_plot("wf_raw.pdf"))
+    p_wf = Waveform(sidebyside=True)
+    p_wf.plot(x, yr1)
+    p_wf.save(get_plot("wf_pedsub.pdf"))
 
 
 if __name__ == '__main__':
